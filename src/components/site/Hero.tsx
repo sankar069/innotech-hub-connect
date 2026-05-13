@@ -61,7 +61,9 @@ export function Hero() {
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </a>
             <a
-              href="#about"
+              href="https://discord.gg/PHh7BRmq"
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass text-foreground font-semibold hover:border-primary/40 transition-colors"
             >
               <Users className="h-4 w-4" /> Join Community
