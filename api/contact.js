@@ -1,5 +1,5 @@
 /* eslint-env node */
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { put } from "@vercel/blob";
 import crypto from "node:crypto";
 
 const REQUIRED_FIELDS = ["name", "email", "organization", "interest_type", "message"];
@@ -16,17 +16,6 @@ const MAX_FIELD_LENGTH = 4000;
 const WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
 const rateLimit = new Map();
-
-const s3 = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials:
-    process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
-      ? {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        }
-      : undefined,
-});
 
 function send(res, statusCode, body) {
   res.status(statusCode).json(body);
@@ -126,9 +115,8 @@ export default async function handler(req, res) {
     return send(res, 400, validation);
   }
 
-  const bucket = process.env.AWS_S3_BUCKET_NAME;
-  if (!process.env.AWS_REGION || !bucket) {
-    console.error("Missing AWS_REGION or AWS_S3_BUCKET_NAME");
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error("Missing BLOB_READ_WRITE_TOKEN");
     return send(res, 500, { error: "Server is not configured" });
   }
 
@@ -138,9 +126,9 @@ export default async function handler(req, res) {
   const year = String(now.getUTCFullYear());
   const month = String(now.getUTCMonth() + 1).padStart(2, "0");
   const day = String(now.getUTCDate()).padStart(2, "0");
-  const prefix = (process.env.AWS_S3_PREFIX || "contact-leads").replace(/^\/+|\/+$/g, "");
+  const prefix = (process.env.BLOB_PREFIX || "contact-leads").replace(/^\/+|\/+$/g, "");
   const emailPart = safeEmailPart(validation.fields.email) || id;
-  const key = `${prefix}/${year}/${month}/${day}/${now.getTime()}-${emailPart}.json`;
+  const pathname = `${prefix}/${year}/${month}/${day}/${now.getTime()}-${emailPart}.json`;
 
   const payload = {
     id,
@@ -157,18 +145,15 @@ export default async function handler(req, res) {
   };
 
   try {
-    await s3.send(
-      new PutObjectCommand({
-        Bucket: bucket,
-        Key: key,
-        Body: JSON.stringify(payload, null, 2),
-        ContentType: "application/json",
-      }),
-    );
+    const blob = await put(pathname, JSON.stringify(payload, null, 2), {
+      access: "private",
+      contentType: "application/json",
+      addRandomSuffix: false,
+    });
 
-    return send(res, 200, { ok: true, id });
+    return send(res, 200, { ok: true, id, pathname: blob.pathname });
   } catch (error) {
-    console.error("S3 contact upload failed", error);
+    console.error("Blob contact upload failed", error);
     return send(res, 500, { error: "Upload failed" });
   }
 }
