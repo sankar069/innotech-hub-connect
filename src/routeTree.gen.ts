@@ -9,22 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TeamRouteImport } from './routes/team'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RulesRouteImport } from './routes/rules'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as MediaRouteImport } from './routes/media'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as EventPlatformRouteImport } from './routes/event-platform'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeamSlugRouteImport } from './routes/team/$slug'
+import { Route as StudentSettingsRouteImport } from './routes/student/settings'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
+import { Route as MediaSlugRouteImport } from './routes/media/$slug'
+import { Route as AdminTractionRouteImport } from './routes/admin/traction'
+import { Route as AdminTeamRouteImport } from './routes/admin/team'
+import { Route as AdminSponsorsRouteImport } from './routes/admin/sponsors'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminRoadmapRouteImport } from './routes/admin/roadmap'
+import { Route as AdminPartnersRouteImport } from './routes/admin/partners'
+import { Route as AdminPagesRouteImport } from './routes/admin/pages'
+import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminEventsRouteImport } from './routes/admin/events'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminContactLeadsRouteImport } from './routes/admin/contact-leads'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
   path: '/team',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoadmapRoute = RoadmapRouteImport.update({
   id: '/roadmap',
   path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -37,9 +80,19 @@ const MediaRoute = MediaRouteImport.update({
   path: '/media',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventPlatformRoute = EventPlatformRouteImport.update({
+  id: '/event-platform',
+  path: '/event-platform',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -47,82 +100,333 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamSlugRoute = TeamSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TeamRoute,
+} as any)
+const StudentSettingsRoute = StudentSettingsRouteImport.update({
+  id: '/student/settings',
+  path: '/student/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/student/profile',
+  path: '/student/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/student/dashboard',
+  path: '/student/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaSlugRoute = MediaSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MediaRoute,
+} as any)
+const AdminTractionRoute = AdminTractionRouteImport.update({
+  id: '/admin/traction',
+  path: '/admin/traction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin/team',
+  path: '/admin/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSponsorsRoute = AdminSponsorsRouteImport.update({
+  id: '/admin/sponsors',
+  path: '/admin/sponsors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoadmapRoute = AdminRoadmapRouteImport.update({
+  id: '/admin/roadmap',
+  path: '/admin/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPartnersRoute = AdminPartnersRouteImport.update({
+  id: '/admin/partners',
+  path: '/admin/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPagesRoute = AdminPagesRouteImport.update({
+  id: '/admin/pages',
+  path: '/admin/pages',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/admin/media',
+  path: '/admin/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEventsRoute = AdminEventsRouteImport.update({
+  id: '/admin/events',
+  path: '/admin/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContactLeadsRoute = AdminContactLeadsRouteImport.update({
+  id: '/admin/contact-leads',
+  path: '/admin/contact-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/event-platform': typeof EventPlatformRoute
   '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
+  '/login': typeof LoginRoute
+  '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
-  '/team': typeof TeamRoute
+  '/rules': typeof RulesRoute
+  '/signup': typeof SignupRoute
+  '/team': typeof TeamRouteWithChildren
+  '/terms': typeof TermsRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/roadmap': typeof AdminRoadmapRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/traction': typeof AdminTractionRoute
+  '/media/$slug': typeof MediaSlugRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/settings': typeof StudentSettingsRoute
+  '/team/$slug': typeof TeamSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/event-platform': typeof EventPlatformRoute
   '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
+  '/login': typeof LoginRoute
+  '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
-  '/team': typeof TeamRoute
+  '/rules': typeof RulesRoute
+  '/signup': typeof SignupRoute
+  '/team': typeof TeamRouteWithChildren
+  '/terms': typeof TermsRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/roadmap': typeof AdminRoadmapRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/traction': typeof AdminTractionRoute
+  '/media/$slug': typeof MediaSlugRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/settings': typeof StudentSettingsRoute
+  '/team/$slug': typeof TeamSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/event-platform': typeof EventPlatformRoute
   '/events': typeof EventsRoute
-  '/media': typeof MediaRoute
+  '/login': typeof LoginRoute
+  '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
-  '/team': typeof TeamRoute
+  '/rules': typeof RulesRoute
+  '/signup': typeof SignupRoute
+  '/team': typeof TeamRouteWithChildren
+  '/terms': typeof TermsRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/events': typeof AdminEventsRoute
+  '/admin/media': typeof AdminMediaRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/partners': typeof AdminPartnersRoute
+  '/admin/roadmap': typeof AdminRoadmapRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/team': typeof AdminTeamRoute
+  '/admin/traction': typeof AdminTractionRoute
+  '/media/$slug': typeof MediaSlugRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/profile': typeof StudentProfileRoute
+  '/student/settings': typeof StudentSettingsRoute
+  '/team/$slug': typeof TeamSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/contact'
+    | '/event-platform'
     | '/events'
+    | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy-policy'
     | '/roadmap'
+    | '/rules'
+    | '/signup'
     | '/team'
+    | '/terms'
+    | '/admin/contact-leads'
+    | '/admin/dashboard'
+    | '/admin/events'
+    | '/admin/media'
+    | '/admin/pages'
+    | '/admin/partners'
+    | '/admin/roadmap'
+    | '/admin/settings'
+    | '/admin/sponsors'
+    | '/admin/team'
+    | '/admin/traction'
+    | '/media/$slug'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/settings'
+    | '/team/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/contact'
+    | '/event-platform'
     | '/events'
+    | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy-policy'
     | '/roadmap'
+    | '/rules'
+    | '/signup'
     | '/team'
+    | '/terms'
+    | '/admin/contact-leads'
+    | '/admin/dashboard'
+    | '/admin/events'
+    | '/admin/media'
+    | '/admin/pages'
+    | '/admin/partners'
+    | '/admin/roadmap'
+    | '/admin/settings'
+    | '/admin/sponsors'
+    | '/admin/team'
+    | '/admin/traction'
+    | '/media/$slug'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/settings'
+    | '/team/$slug'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/contact'
+    | '/event-platform'
     | '/events'
+    | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy-policy'
     | '/roadmap'
+    | '/rules'
+    | '/signup'
     | '/team'
+    | '/terms'
+    | '/admin/contact-leads'
+    | '/admin/dashboard'
+    | '/admin/events'
+    | '/admin/media'
+    | '/admin/pages'
+    | '/admin/partners'
+    | '/admin/roadmap'
+    | '/admin/settings'
+    | '/admin/sponsors'
+    | '/admin/team'
+    | '/admin/traction'
+    | '/media/$slug'
+    | '/student/dashboard'
+    | '/student/profile'
+    | '/student/settings'
+    | '/team/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
+  EventPlatformRoute: typeof EventPlatformRoute
   EventsRoute: typeof EventsRoute
-  MediaRoute: typeof MediaRoute
+  LoginRoute: typeof LoginRoute
+  MediaRoute: typeof MediaRouteWithChildren
   PricingRoute: typeof PricingRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RoadmapRoute: typeof RoadmapRoute
-  TeamRoute: typeof TeamRoute
+  RulesRoute: typeof RulesRoute
+  SignupRoute: typeof SignupRoute
+  TeamRoute: typeof TeamRouteWithChildren
+  TermsRoute: typeof TermsRoute
+  AdminContactLeadsRoute: typeof AdminContactLeadsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminEventsRoute: typeof AdminEventsRoute
+  AdminMediaRoute: typeof AdminMediaRoute
+  AdminPagesRoute: typeof AdminPagesRoute
+  AdminPartnersRoute: typeof AdminPartnersRoute
+  AdminRoadmapRoute: typeof AdminRoadmapRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSponsorsRoute: typeof AdminSponsorsRoute
+  AdminTeamRoute: typeof AdminTeamRoute
+  AdminTractionRoute: typeof AdminTractionRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
+  StudentProfileRoute: typeof StudentProfileRoute
+  StudentSettingsRoute: typeof StudentSettingsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/team': {
       id: '/team'
       path: '/team'
@@ -130,11 +434,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/roadmap': {
       id: '/roadmap'
       path: '/roadmap'
       fullPath: '/roadmap'
       preLoaderRoute: typeof RoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -151,11 +476,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MediaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events': {
       id: '/events'
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/event-platform': {
+      id: '/event-platform'
+      path: '/event-platform'
+      fullPath: '/event-platform'
+      preLoaderRoute: typeof EventPlatformRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -165,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -172,17 +518,170 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/team/$slug': {
+      id: '/team/$slug'
+      path: '/$slug'
+      fullPath: '/team/$slug'
+      preLoaderRoute: typeof TeamSlugRouteImport
+      parentRoute: typeof TeamRoute
+    }
+    '/student/settings': {
+      id: '/student/settings'
+      path: '/student/settings'
+      fullPath: '/student/settings'
+      preLoaderRoute: typeof StudentSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/student/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/student/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media/$slug': {
+      id: '/media/$slug'
+      path: '/$slug'
+      fullPath: '/media/$slug'
+      preLoaderRoute: typeof MediaSlugRouteImport
+      parentRoute: typeof MediaRoute
+    }
+    '/admin/traction': {
+      id: '/admin/traction'
+      path: '/admin/traction'
+      fullPath: '/admin/traction'
+      preLoaderRoute: typeof AdminTractionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/team': {
+      id: '/admin/team'
+      path: '/admin/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/sponsors': {
+      id: '/admin/sponsors'
+      path: '/admin/sponsors'
+      fullPath: '/admin/sponsors'
+      preLoaderRoute: typeof AdminSponsorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/roadmap': {
+      id: '/admin/roadmap'
+      path: '/admin/roadmap'
+      fullPath: '/admin/roadmap'
+      preLoaderRoute: typeof AdminRoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/partners': {
+      id: '/admin/partners'
+      path: '/admin/partners'
+      fullPath: '/admin/partners'
+      preLoaderRoute: typeof AdminPartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/pages': {
+      id: '/admin/pages'
+      path: '/admin/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AdminPagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/admin/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/events': {
+      id: '/admin/events'
+      path: '/admin/events'
+      fullPath: '/admin/events'
+      preLoaderRoute: typeof AdminEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/admin/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contact-leads': {
+      id: '/admin/contact-leads'
+      path: '/admin/contact-leads'
+      fullPath: '/admin/contact-leads'
+      preLoaderRoute: typeof AdminContactLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface MediaRouteChildren {
+  MediaSlugRoute: typeof MediaSlugRoute
+}
+
+const MediaRouteChildren: MediaRouteChildren = {
+  MediaSlugRoute: MediaSlugRoute,
+}
+
+const MediaRouteWithChildren = MediaRoute._addFileChildren(MediaRouteChildren)
+
+interface TeamRouteChildren {
+  TeamSlugRoute: typeof TeamSlugRoute
+}
+
+const TeamRouteChildren: TeamRouteChildren = {
+  TeamSlugRoute: TeamSlugRoute,
+}
+
+const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
+  EventPlatformRoute: EventPlatformRoute,
   EventsRoute: EventsRoute,
-  MediaRoute: MediaRoute,
+  LoginRoute: LoginRoute,
+  MediaRoute: MediaRouteWithChildren,
   PricingRoute: PricingRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   RoadmapRoute: RoadmapRoute,
-  TeamRoute: TeamRoute,
+  RulesRoute: RulesRoute,
+  SignupRoute: SignupRoute,
+  TeamRoute: TeamRouteWithChildren,
+  TermsRoute: TermsRoute,
+  AdminContactLeadsRoute: AdminContactLeadsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminEventsRoute: AdminEventsRoute,
+  AdminMediaRoute: AdminMediaRoute,
+  AdminPagesRoute: AdminPagesRoute,
+  AdminPartnersRoute: AdminPartnersRoute,
+  AdminRoadmapRoute: AdminRoadmapRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSponsorsRoute: AdminSponsorsRoute,
+  AdminTeamRoute: AdminTeamRoute,
+  AdminTractionRoute: AdminTractionRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
+  StudentProfileRoute: StudentProfileRoute,
+  StudentSettingsRoute: StudentSettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -3,9 +3,13 @@ import { MilestoneCard } from "@/components/MilestoneCard";
 import { RoadmapPhaseCard } from "@/components/RoadmapPhaseCard";
 import { StatCard } from "@/components/StatCard";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import { roadmapMilestones, roadmapPhases, roadmapStats } from "@/data/roadmapData";
+import { useCmsCollection } from "@/lib/cms";
 
 export function Roadmap() {
+  const { activeItems: roadmapStats } = useCmsCollection("roadmapStats");
+  const { activeItems: roadmapPhases } = useCmsCollection("roadmapPhases");
+  const { activeItems: roadmapMilestones } = useCmsCollection("roadmapMilestones");
+
   return (
     <section id="roadmap" className="relative py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -23,7 +27,7 @@ export function Roadmap() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
           {roadmapStats.map((stat, index) => (
-            <StatCard key={stat.title} {...stat} index={index} />
+            <StatCard key={stat.id} value={String(stat.value ?? "")} title={String(stat.title ?? "")} description={String(stat.description ?? "")} index={index} />
           ))}
         </div>
 
@@ -35,7 +39,15 @@ export function Roadmap() {
           />
           <div className="grid lg:grid-cols-2 gap-5 mt-12">
             {roadmapPhases.map((phase, index) => (
-              <RoadmapPhaseCard key={phase.id} {...phase} index={index} />
+              <RoadmapPhaseCard
+                key={phase.id}
+                id={String(phase.code ?? phase.id)}
+                title={String(phase.title ?? "")}
+                status={String(phase.status ?? "")}
+                progress={Number(phase.progress ?? 0)}
+                items={Array.isArray(phase.items) ? phase.items.map(String) : String(phase.items ?? "").split("\n").filter(Boolean)}
+                index={index}
+              />
             ))}
           </div>
         </div>
@@ -50,7 +62,13 @@ export function Roadmap() {
             <div className="absolute left-0 top-0 bottom-0 w-px bg-border hidden md:block" />
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:pl-8">
               {roadmapMilestones.map((milestone, index) => (
-                <MilestoneCard key={`${milestone.quarter}-${milestone.title}`} {...milestone} index={index} />
+                <MilestoneCard
+                  key={milestone.id}
+                  quarter={String(milestone.timeline ?? milestone.quarter ?? "")}
+                  title={String(milestone.title ?? "")}
+                  status={String(milestone.status ?? "")}
+                  index={index}
+                />
               ))}
             </div>
           </div>

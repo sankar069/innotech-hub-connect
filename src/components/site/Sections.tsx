@@ -5,10 +5,11 @@ import {
   Calendar, Trophy, Mic, Video, Brain, Crown, Podcast, PartyPopper,
   Search, Cpu, ClipboardCheck, Award, BarChart3, Bot, Lightbulb, FileSearch, UsersRound, FileText,
   TrendingUp, Compass, Wallet, Building2, MapPin, FolderLock, BellRing,
-  GraduationCap, School, Handshake, Briefcase, Mail, Sparkle, Activity,
+  GraduationCap, School, Handshake, Briefcase, Mail, Sparkle, Activity, LogIn,
 } from "lucide-react";
 import { SectionHeading } from "./SectionHeading";
 import { Counter } from "./Counter";
+import { getCmsCollection, saveCmsCollection, useCmsCollection } from "@/lib/cms";
 
 /* ======================= ABOUT ======================= */
 const aboutCards = [
@@ -147,6 +148,18 @@ export function EventPlatform() {
           title={<>InnoTech-Hub <span className="text-gradient-racing">Official</span> Event Platform</>}
           subtitle="Created and managed only by the InnoTech-Hub team. Not an open SaaS for external colleges to host events — we run our own official events end-to-end."
         />
+
+        <div className="flex flex-wrap justify-center gap-3 mt-10">
+          <a href="/login" className="px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold hover:bg-[#a93a25] transition-colors inline-flex items-center gap-2">
+            <LogIn className="h-4 w-4" /> Login to Event Platform
+          </a>
+          <a href="/signup" className="px-6 py-3 rounded-xl glass text-foreground font-semibold hover:border-primary/40 transition-colors inline-flex items-center gap-2">
+            <Users className="h-4 w-4" /> Create Student Account
+          </a>
+          <a href="/events" className="px-6 py-3 rounded-xl border border-accent/40 text-foreground font-semibold hover:bg-accent/10 transition-colors inline-flex items-center gap-2">
+            <Search className="h-4 w-4" /> Explore Events
+          </a>
+        </div>
 
         {/* categories */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
@@ -291,6 +304,11 @@ export function StudentDashboard() {
           Your profile becomes a <span className="text-foreground font-semibold">digital innovation passport</span> — achievements,
           certificates, skills, and event history connected in one place.
         </p>
+        <div className="mt-8 flex justify-center">
+          <a href="/event-platform" className="px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold hover:bg-[#a93a25] transition-colors inline-flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" /> Open My Dashboard
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -482,6 +500,10 @@ const tractionStats = [
 ];
 
 export function BusinessAndTraction() {
+  const { activeItems: dynamicTractionStats } = useCmsCollection("tractionStats");
+  const visibleTractionStats = dynamicTractionStats.length > 0 ? dynamicTractionStats : tractionStats;
+  const firstTraction = visibleTractionStats[0];
+
   return (
     <section className="relative py-24 md:py-32 bg-card/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -505,18 +527,18 @@ export function BusinessAndTraction() {
           </div>
           <div className="glass-strong rounded-2xl p-6 racing-border">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />Current Traction</h3>
+              <h3 className="font-bold flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />{String(firstTraction?.sectionHeading ?? "Current Traction")}</h3>
               <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> LIVE
               </span>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {tractionStats.map((s) => (
-                <div key={s.label} className="bg-card/50 border border-border rounded-xl p-4">
+              {visibleTractionStats.map((s) => (
+                <div key={String(s.id ?? s.label ?? s.title)} className="bg-card/50 border border-border rounded-xl p-4">
                   <div className="text-3xl font-display font-bold text-gradient-primary">
-                    {s.isFloat ? <>{s.prefix}{s.v}{s.suffix}</> : <Counter value={s.v} prefix={s.prefix} suffix={s.suffix} />}
+                    {Number.isFinite(Number(s.value ?? s.v)) && Number(s.value ?? s.v) % 1 !== 0 ? <>{String(s.prefix ?? "")}{String(s.value ?? s.v)}{String(s.suffix ?? "")}</> : <Counter value={Number(s.value ?? s.v ?? 0)} prefix={String(s.prefix ?? "")} suffix={String(s.suffix ?? "")} />}
                   </div>
-                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-mono mt-1">{s.label}</div>
+                  <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-mono mt-1">{String(s.title ?? s.label ?? "")}</div>
                 </div>
               ))}
             </div>
@@ -637,10 +659,11 @@ export function Benefits() {
 
 /* ======================= PARTNERS / TEAM / MEDIA ======================= */
 export function PartnersTeamMedia() {
-  const teamGroups = [
-    "Founders / Core Team", "Event Operations", "Tech & Product",
-    "Design & Media", "Community", "Partnerships",
-  ];
+  const { activeItems: teamGroups } = useCmsCollection("teamCategories");
+  const { activeItems: partners } = useCmsCollection("partners");
+  const { activeItems: sponsors } = useCmsCollection("sponsors");
+  const { activeItems: mediaCategories } = useCmsCollection("mediaCategories");
+
   return (
     <>
       <section id="partners" className="relative py-24 md:py-32">
@@ -651,10 +674,11 @@ export function PartnersTeamMedia() {
             subtitle="Our collaborators help us create better learning experiences and innovation-driven events."
           />
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-10">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="aspect-[3/2] glass rounded-xl flex items-center justify-center text-muted-foreground/60 text-xs font-mono">
-                PARTNER {i + 1}
-              </div>
+            {[...partners, ...sponsors].map((item, i) => (
+              <a key={String(item.id)} href={String(item.websiteUrl ?? "#")} className="aspect-[3/2] glass rounded-xl flex items-center justify-center text-muted-foreground/60 text-xs font-mono text-center p-3">
+                {item.logoUrl ? <img src={String(item.logoUrl)} alt={String(item.name ?? "Partner")} className="max-h-12 max-w-full object-contain" /> : String(item.name ?? `PARTNER ${i + 1}`)}
+                {item.sponsorshipLevel ? <span className="absolute mt-20 rounded-full border border-border bg-card/70 px-2 py-0.5 text-[10px] text-primary">{String(item.sponsorshipLevel)}</span> : null}
+              </a>
             ))}
           </div>
           <div className="flex flex-wrap justify-center gap-3 mt-10">
@@ -677,8 +701,9 @@ export function PartnersTeamMedia() {
           />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
             {teamGroups.map((t, i) => (
-              <motion.div
-                key={t}
+              <motion.a
+                key={String(t.id)}
+                href={`/team/${String(t.slug ?? t.id)}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -688,11 +713,11 @@ export function PartnersTeamMedia() {
                 <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow mb-4">
                   <Users className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <h3 className="font-bold text-lg">{t}</h3>
+                <h3 className="font-bold text-lg">{String(t.name ?? t.title ?? "")}</h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Driven contributors building, shipping, and scaling InnoTech-Hub every day.
+                  {String(t.shortDescription ?? "Driven contributors building, shipping, and scaling InnoTech-Hub every day.")}
                 </p>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </div>
@@ -706,9 +731,10 @@ export function PartnersTeamMedia() {
             subtitle="Building presence through events, student stories, podcasts, workshops, and collaborations."
           />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
-            {["Event Highlights", "Student Testimonials", "Podcast Clips", "Hackathon Stories", "Tech Fest Moments", "Partner Shoutouts"].map((m, i) => (
-              <motion.div
-                key={m}
+            {mediaCategories.map((m, i) => (
+              <motion.a
+                key={String(m.id)}
+                href={`/media/${String(m.slug ?? m.id)}`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -717,9 +743,9 @@ export function PartnersTeamMedia() {
               >
                 <div>
                   <Video className="h-8 w-8 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                  <div className="font-bold">{m}</div>
+                  <div className="font-bold">{String(m.name ?? m.title ?? "")}</div>
                 </div>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </div>
@@ -775,6 +801,19 @@ export function Contact() {
       if (!response.ok) {
         throw new Error("Contact submission failed");
       }
+
+      saveCmsCollection("contactLeads", [
+        ...getCmsCollection("contactLeads"),
+        {
+          id: crypto.randomUUID(),
+          ...form,
+          status: "New",
+          adminNotes: "",
+          created_at: new Date().toISOString(),
+          active: true,
+          order: Date.now(),
+        },
+      ]);
 
       setStatus("success");
       setForm({
@@ -946,8 +985,9 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><a href="/#partners" className="text-foreground/80 hover:text-primary transition-colors">Partners</a></li>
               <li><a href="/contact" className="text-foreground/80 hover:text-primary transition-colors">Contact</a></li>
-              <li><a href="#" className="text-foreground/80 hover:text-primary transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-foreground/80 hover:text-primary transition-colors">Terms</a></li>
+              <li><a href="/privacy-policy" className="text-foreground/80 hover:text-primary transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="text-foreground/80 hover:text-primary transition-colors">Terms</a></li>
+              <li><a href="/rules" className="text-foreground/80 hover:text-primary transition-colors">Rules</a></li>
             </ul>
           </div>
         </div>

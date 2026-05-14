@@ -1,17 +1,17 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Users, Rocket, Handshake, Activity, Cpu, Trophy, Gauge } from "lucide-react";
 import { Counter } from "./Counter";
-
-const stats = [
-  { label: "Revenue Generated", value: 2.4, prefix: "₹", suffix: " Lakhs+", isFloat: true },
-  { label: "Events Conducted", value: 7, suffix: "+" },
-  { label: "Hackathon Collaboration", value: 1, suffix: "" },
-  { label: "Participants Reached", value: 3000, suffix: "+" },
-  { label: "States Represented", value: 8, suffix: "+" },
-  { label: "Colleges Connected", value: 25, suffix: "+" },
-];
+import { useCmsCollection } from "@/lib/cms";
 
 export function Hero() {
+  const { activeItems: siteStats } = useCmsCollection("siteStats");
+  const stats = siteStats.filter((item) => Number(item.order ?? 0) <= 6);
+  const supportNotes = {
+    growth: String(siteStats.find((item) => item.id === "growth-note")?.value ?? "+24% growth"),
+    hackathon: String(siteStats.find((item) => item.id === "hackathon-note")?.value ?? "1 hackathon with Gemini Google"),
+    saas: String(siteStats.find((item) => item.id === "saas-note")?.value ?? "SaaS shipping"),
+  };
+
   return (
     <section id="home" className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-hero">
       <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
@@ -67,6 +67,12 @@ export function Hero() {
             >
               <Handshake className="h-4 w-4" /> Partner With Us
             </a>
+            <a
+              href="/event-platform"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold hover:bg-[#a93a25] transition-colors"
+            >
+              <Rocket className="h-4 w-4" /> Enter Event Platform
+            </a>
           </div>
         </motion.div>
 
@@ -92,7 +98,7 @@ export function Hero() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {stats.map((s, i) => (
                 <motion.div
-                  key={s.label}
+                  key={s.id}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -100,17 +106,17 @@ export function Hero() {
                   className="bg-card/40 border border-border rounded-xl p-4 hover:border-primary/40 transition-colors"
                 >
                   <div className="text-2xl md:text-3xl font-display font-bold text-gradient-primary">
-                    {s.isFloat ? (
+                    {Number.isFinite(Number(s.value)) && Number(s.value) % 1 !== 0 ? (
                       <>
                         {s.prefix}{s.value}
                         {s.suffix}
                       </>
                     ) : (
-                      <Counter value={s.value as number} prefix={s.prefix} suffix={s.suffix} />
+                      <Counter value={Number(s.value ?? 0)} prefix={String(s.prefix ?? "")} suffix={String(s.suffix ?? "")} />
                     )}
                   </div>
                   <div className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1 font-mono">
-                    {s.label}
+                    {String(s.shortLabel ?? s.title ?? "")}
                   </div>
                 </motion.div>
               ))}
@@ -121,19 +127,19 @@ export function Hero() {
           <div className="hidden xl:block absolute -left-8 top-1/4 glass rounded-xl p-3 float-soft shadow-card">
             <div className="flex items-center gap-2 text-xs">
               <Activity className="h-4 w-4 text-racing-cyan" />
-              <span className="font-mono">+24% growth</span>
+              <span className="font-mono">{supportNotes.growth}</span>
             </div>
           </div>
           <div className="hidden xl:block absolute -right-8 bottom-1/4 glass rounded-xl p-3 float-soft shadow-card" style={{ animationDelay: "1.5s" }}>
             <div className="flex items-center gap-2 text-xs">
               <Trophy className="h-4 w-4 text-accent" />
-              <span className="font-mono">1 hackathon with Gemini Google</span>
+              <span className="font-mono">{supportNotes.hackathon}</span>
             </div>
           </div>
           <div className="hidden xl:block absolute -right-12 top-1/3 glass rounded-xl p-3 float-soft shadow-card" style={{ animationDelay: "2.5s" }}>
             <div className="flex items-center gap-2 text-xs">
               <Rocket className="h-4 w-4 text-primary" />
-              <span className="font-mono">SaaS shipping</span>
+              <span className="font-mono">{supportNotes.saas}</span>
             </div>
           </div>
         </motion.div>
