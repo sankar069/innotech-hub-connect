@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AdminCmsPage } from "@/pages/AdminCmsPage";
+import { AdminEventsPage } from "@/pages/AdminEventsPage";
 
 export const Route = createFileRoute("/admin/events")({
-  component: () => <AdminCmsPage module="events" />,
+  component: AdminEventsPage,
 });

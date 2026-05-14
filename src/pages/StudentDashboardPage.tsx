@@ -3,6 +3,8 @@ import { Award, Calendar, CreditCard, Settings, Sparkles, UserRound } from "luci
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { getEventById, getMyRegistrations, type EventRegistration } from "@/lib/events";
+import { useCmsCollection } from "@/lib/cms";
 
 const studentCards = [
   { title: "Registered Events", icon: Calendar },
@@ -14,9 +16,13 @@ const studentCards = [
 ];
 
 export function StudentDashboardPage() {
+  const { items } = useCmsCollection<EventRegistration>("eventRegistrations");
+
   return (
     <ProtectedRoute allow="student">
-      {(user) => (
+      {(user) => {
+        const registrations = getMyRegistrations().filter((registration) => items.some((item) => item.id === registration.id));
+        return (
         <div className="min-h-screen bg-background text-foreground">
           <Navbar />
           <main className="pt-32 pb-20 md:pt-40 md:pb-28">
@@ -40,7 +46,7 @@ export function StudentDashboardPage() {
                 {studentCards.map((card, index) => (
                   <motion.a
                     key={card.title}
-                    href={card.title === "Profile Completion" ? "/student/profile" : card.title === "Recommended Events" ? "/events" : "/student/dashboard"}
+                    href={card.title === "Profile Completion" ? "/student/profile" : card.title === "Recommended Events" ? "/events" : card.title === "Settings" ? "/student/settings" : card.title.includes("Events") || card.title === "Payment Status" ? "/student/registrations" : "/student/dashboard"}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -60,11 +66,42 @@ export function StudentDashboardPage() {
                   <Settings className="h-4 w-4" /> Settings
                 </a>
               </div>
+
+              <section className="mt-12">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold">My Registered Events</h2>
+                    <p className="text-sm text-muted-foreground mt-2">Registration, payment, certificates, and event updates appear here.</p>
+                  </div>
+                  <a href="/student/registrations" className="text-sm font-semibold text-primary hover:text-primary/80">View all registrations</a>
+                </div>
+                {registrations.length === 0 ? (
+                  <div className="glass-strong rounded-2xl p-6 racing-border text-muted-foreground">No registered events yet.</div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {registrations.slice(0, 4).map((registration) => {
+                      const event = getEventById(registration.eventId);
+                      return (
+                        <a key={registration.id} href={`/events/${registration.eventSlug}`} className="glass-strong rounded-2xl p-5 racing-border hover:-translate-y-1 transition-transform">
+                          <p className="text-xs uppercase tracking-widest font-mono text-primary">{event?.category ?? "Event"}</p>
+                          <h3 className="text-xl font-bold mt-2">{event?.title ?? registration.eventSlug}</h3>
+                          <p className="text-sm text-muted-foreground mt-2">{event?.dates?.eventStartDate ?? "Date to be announced"}</p>
+                          <div className="flex flex-wrap gap-2 mt-4">
+                            <span className="px-3 py-1 rounded-full glass text-xs font-mono uppercase tracking-widest text-primary">{registration.registrationStatus}</span>
+                            <span className="px-3 py-1 rounded-full glass text-xs font-mono uppercase tracking-widest text-primary">{registration.paymentStatus}</span>
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
             </div>
           </main>
           <Footer />
         </div>
-      )}
+      );
+      }}
     </ProtectedRoute>
   );
 }

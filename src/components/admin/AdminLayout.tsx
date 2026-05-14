@@ -10,6 +10,7 @@ const navItems = [
   ["Overview", "/admin/dashboard"],
   ["Website Stats / Traction", "/admin/traction"],
   ["Events CMS", "/admin/events"],
+  ["Payment Verification", "/admin/payments"],
   ["Roadmap", "/admin/roadmap"],
   ["Team", "/admin/team"],
   ["Partners", "/admin/partners"],

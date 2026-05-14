@@ -25,20 +25,26 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamSlugRouteImport } from './routes/team/$slug'
 import { Route as StudentSettingsRouteImport } from './routes/student/settings'
+import { Route as StudentRegistrationsRouteImport } from './routes/student/registrations'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentEventsRouteImport } from './routes/student/events'
 import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
 import { Route as MediaSlugRouteImport } from './routes/media/$slug'
+import { Route as EventsSlugRouteImport } from './routes/events/$slug'
 import { Route as AdminTractionRouteImport } from './routes/admin/traction'
 import { Route as AdminTeamRouteImport } from './routes/admin/team'
 import { Route as AdminSponsorsRouteImport } from './routes/admin/sponsors'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminRoadmapRouteImport } from './routes/admin/roadmap'
+import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminPartnersRouteImport } from './routes/admin/partners'
 import { Route as AdminPagesRouteImport } from './routes/admin/pages'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminContactLeadsRouteImport } from './routes/admin/contact-leads'
+import { Route as EventsSlugRegisterRouteImport } from './routes/events/$slug/register'
+import { Route as AdminEventsEventIdRegistrationsRouteImport } from './routes/admin/events/$eventId/registrations'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -120,9 +126,19 @@ const StudentSettingsRoute = StudentSettingsRouteImport.update({
   path: '/student/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentRegistrationsRoute = StudentRegistrationsRouteImport.update({
+  id: '/student/registrations',
+  path: '/student/registrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
   id: '/student/profile',
   path: '/student/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentEventsRoute = StudentEventsRouteImport.update({
+  id: '/student/events',
+  path: '/student/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentDashboardRoute = StudentDashboardRouteImport.update({
@@ -134,6 +150,11 @@ const MediaSlugRoute = MediaSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => MediaRoute,
+} as any)
+const EventsSlugRoute = EventsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => EventsRoute,
 } as any)
 const AdminTractionRoute = AdminTractionRouteImport.update({
   id: '/admin/traction',
@@ -158,6 +179,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
 const AdminRoadmapRoute = AdminRoadmapRouteImport.update({
   id: '/admin/roadmap',
   path: '/admin/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminPaymentsRoute = AdminPaymentsRouteImport.update({
+  id: '/admin/payments',
+  path: '/admin/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminPartnersRoute = AdminPartnersRouteImport.update({
@@ -190,13 +216,24 @@ const AdminContactLeadsRoute = AdminContactLeadsRouteImport.update({
   path: '/admin/contact-leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsSlugRegisterRoute = EventsSlugRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => EventsSlugRoute,
+} as any)
+const AdminEventsEventIdRegistrationsRoute =
+  AdminEventsEventIdRegistrationsRouteImport.update({
+    id: '/$eventId/registrations',
+    path: '/$eventId/registrations',
+    getParentRoute: () => AdminEventsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/event-platform': typeof EventPlatformRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
@@ -208,27 +245,33 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/events': typeof AdminEventsRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
+  '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/events': typeof StudentEventsRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/registrations': typeof StudentRegistrationsRoute
   '/student/settings': typeof StudentSettingsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/event-platform': typeof EventPlatformRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
@@ -240,20 +283,26 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/events': typeof AdminEventsRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
+  '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/events': typeof StudentEventsRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/registrations': typeof StudentRegistrationsRoute
   '/student/settings': typeof StudentSettingsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -261,7 +310,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/event-platform': typeof EventPlatformRoute
-  '/events': typeof EventsRoute
+  '/events': typeof EventsRouteWithChildren
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
@@ -273,20 +322,26 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/events': typeof AdminEventsRoute
+  '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
+  '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
+  '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/events': typeof StudentEventsRoute
   '/student/profile': typeof StudentProfileRoute
+  '/student/registrations': typeof StudentRegistrationsRoute
   '/student/settings': typeof StudentSettingsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -311,16 +366,22 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/pages'
     | '/admin/partners'
+    | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
     | '/admin/team'
     | '/admin/traction'
+    | '/events/$slug'
     | '/media/$slug'
     | '/student/dashboard'
+    | '/student/events'
     | '/student/profile'
+    | '/student/registrations'
     | '/student/settings'
     | '/team/$slug'
+    | '/events/$slug/register'
+    | '/admin/events/$eventId/registrations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -343,16 +404,22 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/pages'
     | '/admin/partners'
+    | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
     | '/admin/team'
     | '/admin/traction'
+    | '/events/$slug'
     | '/media/$slug'
     | '/student/dashboard'
+    | '/student/events'
     | '/student/profile'
+    | '/student/registrations'
     | '/student/settings'
     | '/team/$slug'
+    | '/events/$slug/register'
+    | '/admin/events/$eventId/registrations'
   id:
     | '__root__'
     | '/'
@@ -375,16 +442,22 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/pages'
     | '/admin/partners'
+    | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
     | '/admin/team'
     | '/admin/traction'
+    | '/events/$slug'
     | '/media/$slug'
     | '/student/dashboard'
+    | '/student/events'
     | '/student/profile'
+    | '/student/registrations'
     | '/student/settings'
     | '/team/$slug'
+    | '/events/$slug/register'
+    | '/admin/events/$eventId/registrations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -392,7 +465,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   EventPlatformRoute: typeof EventPlatformRoute
-  EventsRoute: typeof EventsRoute
+  EventsRoute: typeof EventsRouteWithChildren
   LoginRoute: typeof LoginRoute
   MediaRoute: typeof MediaRouteWithChildren
   PricingRoute: typeof PricingRoute
@@ -404,17 +477,20 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AdminContactLeadsRoute: typeof AdminContactLeadsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminEventsRoute: typeof AdminEventsRoute
+  AdminEventsRoute: typeof AdminEventsRouteWithChildren
   AdminMediaRoute: typeof AdminMediaRoute
   AdminPagesRoute: typeof AdminPagesRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
+  AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRoadmapRoute: typeof AdminRoadmapRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSponsorsRoute: typeof AdminSponsorsRoute
   AdminTeamRoute: typeof AdminTeamRoute
   AdminTractionRoute: typeof AdminTractionRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
+  StudentEventsRoute: typeof StudentEventsRoute
   StudentProfileRoute: typeof StudentProfileRoute
+  StudentRegistrationsRoute: typeof StudentRegistrationsRoute
   StudentSettingsRoute: typeof StudentSettingsRoute
 }
 
@@ -532,11 +608,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student/registrations': {
+      id: '/student/registrations'
+      path: '/student/registrations'
+      fullPath: '/student/registrations'
+      preLoaderRoute: typeof StudentRegistrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/profile': {
       id: '/student/profile'
       path: '/student/profile'
       fullPath: '/student/profile'
       preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/events': {
+      id: '/student/events'
+      path: '/student/events'
+      fullPath: '/student/events'
+      preLoaderRoute: typeof StudentEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/dashboard': {
@@ -552,6 +642,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/media/$slug'
       preLoaderRoute: typeof MediaSlugRouteImport
       parentRoute: typeof MediaRoute
+    }
+    '/events/$slug': {
+      id: '/events/$slug'
+      path: '/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof EventsSlugRouteImport
+      parentRoute: typeof EventsRoute
     }
     '/admin/traction': {
       id: '/admin/traction'
@@ -586,6 +683,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/roadmap'
       fullPath: '/admin/roadmap'
       preLoaderRoute: typeof AdminRoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/payments': {
+      id: '/admin/payments'
+      path: '/admin/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AdminPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/partners': {
@@ -630,8 +734,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$slug/register': {
+      id: '/events/$slug/register'
+      path: '/register'
+      fullPath: '/events/$slug/register'
+      preLoaderRoute: typeof EventsSlugRegisterRouteImport
+      parentRoute: typeof EventsSlugRoute
+    }
+    '/admin/events/$eventId/registrations': {
+      id: '/admin/events/$eventId/registrations'
+      path: '/$eventId/registrations'
+      fullPath: '/admin/events/$eventId/registrations'
+      preLoaderRoute: typeof AdminEventsEventIdRegistrationsRouteImport
+      parentRoute: typeof AdminEventsRoute
+    }
   }
 }
+
+interface EventsSlugRouteChildren {
+  EventsSlugRegisterRoute: typeof EventsSlugRegisterRoute
+}
+
+const EventsSlugRouteChildren: EventsSlugRouteChildren = {
+  EventsSlugRegisterRoute: EventsSlugRegisterRoute,
+}
+
+const EventsSlugRouteWithChildren = EventsSlugRoute._addFileChildren(
+  EventsSlugRouteChildren,
+)
+
+interface EventsRouteChildren {
+  EventsSlugRoute: typeof EventsSlugRouteWithChildren
+}
+
+const EventsRouteChildren: EventsRouteChildren = {
+  EventsSlugRoute: EventsSlugRouteWithChildren,
+}
+
+const EventsRouteWithChildren =
+  EventsRoute._addFileChildren(EventsRouteChildren)
 
 interface MediaRouteChildren {
   MediaSlugRoute: typeof MediaSlugRoute
@@ -653,12 +794,24 @@ const TeamRouteChildren: TeamRouteChildren = {
 
 const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
 
+interface AdminEventsRouteChildren {
+  AdminEventsEventIdRegistrationsRoute: typeof AdminEventsEventIdRegistrationsRoute
+}
+
+const AdminEventsRouteChildren: AdminEventsRouteChildren = {
+  AdminEventsEventIdRegistrationsRoute: AdminEventsEventIdRegistrationsRoute,
+}
+
+const AdminEventsRouteWithChildren = AdminEventsRoute._addFileChildren(
+  AdminEventsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   EventPlatformRoute: EventPlatformRoute,
-  EventsRoute: EventsRoute,
+  EventsRoute: EventsRouteWithChildren,
   LoginRoute: LoginRoute,
   MediaRoute: MediaRouteWithChildren,
   PricingRoute: PricingRoute,
@@ -670,17 +823,20 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AdminContactLeadsRoute: AdminContactLeadsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
-  AdminEventsRoute: AdminEventsRoute,
+  AdminEventsRoute: AdminEventsRouteWithChildren,
   AdminMediaRoute: AdminMediaRoute,
   AdminPagesRoute: AdminPagesRoute,
   AdminPartnersRoute: AdminPartnersRoute,
+  AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRoadmapRoute: AdminRoadmapRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSponsorsRoute: AdminSponsorsRoute,
   AdminTeamRoute: AdminTeamRoute,
   AdminTractionRoute: AdminTractionRoute,
   StudentDashboardRoute: StudentDashboardRoute,
+  StudentEventsRoute: StudentEventsRoute,
   StudentProfileRoute: StudentProfileRoute,
+  StudentRegistrationsRoute: StudentRegistrationsRoute,
   StudentSettingsRoute: StudentSettingsRoute,
 }
 export const routeTree = rootRouteImport

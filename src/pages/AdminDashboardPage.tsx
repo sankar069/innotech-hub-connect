@@ -38,7 +38,7 @@ export function AdminDashboardPage() {
                 {adminCards.map((card, index) => (
                   <motion.a
                     key={card.title}
-                    href={card.title === "Roadmap" ? "/admin/roadmap" : card.title === "Website Content" ? "/admin/pages" : card.title === "Events" ? "/admin/events" : card.title === "Team" ? "/admin/team" : card.title === "Partners & Sponsors" ? "/admin/partners" : card.title === "Media & Outreach" ? "/admin/media" : "/admin/dashboard"}
+                    href={card.title === "Roadmap" ? "/admin/roadmap" : card.title === "Website Content" ? "/admin/pages" : card.title === "Events" ? "/admin/events" : card.title === "Registrations" ? "/admin/events" : card.title === "Payments" ? "/admin/payments" : card.title === "Team" ? "/admin/team" : card.title === "Partners & Sponsors" ? "/admin/partners" : card.title === "Media & Outreach" ? "/admin/media" : "/admin/dashboard"}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
