@@ -3,8 +3,9 @@ import { Award, Calendar, CreditCard, Settings, Sparkles, UserRound } from "luci
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { getEventById, getMyRegistrations, type EventRegistration } from "@/lib/events";
+import { getEventById, getMyRegistrations, getPublicEvents, type EventRegistration } from "@/lib/events";
 import { useCmsCollection } from "@/lib/cms";
+import { getCurrentStudentProfile, getMyCertificates, getMyNotifications, getStudentStats } from "@/lib/studentPlatform";
 
 const studentCards = [
   { title: "Registered Events", icon: Calendar },
@@ -22,6 +23,28 @@ export function StudentDashboardPage() {
     <ProtectedRoute allow="student">
       {(user) => {
         const registrations = getMyRegistrations().filter((registration) => items.some((item) => item.id === registration.id));
+        const profile = getCurrentStudentProfile();
+        const stats = getStudentStats(user.email);
+        const certificates = getMyCertificates(user.email);
+        const notifications = getMyNotifications(user.email);
+        const recommended = getPublicEvents().slice(0, 3);
+        const overview = [
+          ["Registered Events", stats.registered],
+          ["Upcoming Events", stats.upcoming],
+          ["Completed Events", stats.completed],
+          ["Certificates Earned", stats.certificates],
+          ["Payments Pending", stats.paymentsPending],
+          ["Achievements", stats.achievements],
+          ["Skills Added", stats.skillsAdded],
+          ["Profile Completion", `${stats.profileCompletion}%`],
+        ];
+        const growth = [
+          ["Event Participation", Math.min(100, stats.registered * 20)],
+          ["Practical Submission", Math.min(100, stats.completed * 25)],
+          ["Team Collaboration", Math.min(100, registrations.filter((item) => item.teamDetails?.teamName).length * 35)],
+          ["Certificate Completion", Math.min(100, certificates.length * 30)],
+          ["Career Readiness", Math.min(100, Math.round((stats.profileCompletion + stats.achievements * 10) / 2))],
+        ];
         return (
         <div className="min-h-screen bg-background text-foreground">
           <Navbar />
@@ -40,13 +63,32 @@ export function StudentDashboardPage() {
                 <p className="mt-4 text-muted-foreground text-base md:text-lg">
                   Your personal innovation passport for events, certificates, skills, and growth.
                 </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a href="/events" className="rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Explore Events</a>
+                  <a href="/student/registrations" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">My Registrations</a>
+                  <a href="/student/profile" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Edit Profile</a>
+                  <a href="/student/certificates" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Certificates</a>
+                </div>
+                <div className="mt-6 max-w-sm">
+                  <div className="flex justify-between text-sm text-muted-foreground mb-2"><span>Profile Completion</span><span>{profile?.profileCompletion ?? 0}%</span></div>
+                  <div className="h-2 rounded-full bg-secondary overflow-hidden"><div className="h-full bg-gradient-primary" style={{ width: `${profile?.profileCompletion ?? 0}%` }} /></div>
+                </div>
               </motion.div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {overview.map(([label, value], index) => (
+                  <motion.div key={label} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="glass-strong rounded-2xl p-5 racing-border">
+                    <p className="text-xs uppercase tracking-widest font-mono text-muted-foreground">{label}</p>
+                    <div className="text-3xl font-bold mt-2">{value}</div>
+                  </motion.div>
+                ))}
+              </div>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {studentCards.map((card, index) => (
                   <motion.a
                     key={card.title}
-                    href={card.title === "Profile Completion" ? "/student/profile" : card.title === "Recommended Events" ? "/events" : card.title === "Settings" ? "/student/settings" : card.title.includes("Events") || card.title === "Payment Status" ? "/student/registrations" : "/student/dashboard"}
+                    href={card.title === "Profile Completion" ? "/student/profile" : card.title === "Recommended Events" ? "/events" : card.title === "Certificates" ? "/student/certificates" : card.title.includes("Events") || card.title === "Payment Status" ? "/student/registrations" : "/student/dashboard"}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -96,6 +138,44 @@ export function StudentDashboardPage() {
                   </div>
                 )}
               </section>
+
+              <div className="grid lg:grid-cols-2 gap-6 mt-12">
+                <section className="glass-strong rounded-2xl p-6 racing-border">
+                  <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+                  <div className="space-y-3">
+                    {registrations[0] ? <Activity text={`Recently registered for ${getEventById(registrations[0].eventId)?.title ?? registrations[0].eventSlug}`} /> : null}
+                    {registrations.find((item) => item.paymentStatus !== "Not Required") ? <Activity text={`Payment status: ${registrations.find((item) => item.paymentStatus !== "Not Required")?.paymentStatus}`} /> : null}
+                    {certificates[0] ? <Activity text={`Certificate issued: ${certificates[0].eventTitle}`} /> : null}
+                    {recommended[0] ? <Activity text={`Upcoming event reminder: ${recommended[0].title}`} /> : null}
+                    {notifications[0] ? <Activity text={notifications[0].title} /> : null}
+                    {!registrations.length && !notifications.length ? <p className="text-sm text-muted-foreground">No recent activity yet.</p> : null}
+                  </div>
+                </section>
+
+                <section className="glass-strong rounded-2xl p-6 racing-border">
+                  <h2 className="text-2xl font-bold mb-4">Recommended Events</h2>
+                  <div className="space-y-3">
+                    {recommended.map((event) => (
+                      <a key={event.id} href={`/events/${event.slug}`} className="block rounded-xl border border-border p-4 hover:border-primary/50 transition-colors">
+                        <div className="text-sm font-semibold">{event.title}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{event.category} · {event.dates?.eventStartDate}</div>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              <section className="glass-strong rounded-2xl p-6 racing-border mt-6">
+                <h2 className="text-2xl font-bold mb-5">Growth Analytics</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {growth.map(([label, value]) => (
+                    <div key={label} className="rounded-xl border border-border bg-background/40 p-4">
+                      <div className="flex justify-between text-sm mb-2"><span>{label}</span><span>{value}%</span></div>
+                      <div className="h-2 rounded-full bg-secondary overflow-hidden"><div className="h-full bg-gradient-primary" style={{ width: `${value}%` }} /></div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
           </main>
           <Footer />
@@ -104,4 +184,8 @@ export function StudentDashboardPage() {
       }}
     </ProtectedRoute>
   );
+}
+
+function Activity({ text }: { text: string }) {
+  return <div className="rounded-xl border border-border bg-background/40 p-4 text-sm text-muted-foreground">{text}</div>;
 }

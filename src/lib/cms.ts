@@ -22,6 +22,10 @@ export type CmsCollection =
   | "mediaPosts"
   | "pages"
   | "contactLeads"
+  | "studentProfiles"
+  | "certificates"
+  | "notifications"
+  | "submissions"
   | "settings";
 
 export type CmsItem = Record<string, unknown> & {
@@ -293,6 +297,10 @@ export const cmsSeed: Record<CmsCollection, CmsItem[]> = {
     },
   ],
   contactLeads: [],
+  studentProfiles: [],
+  certificates: [],
+  notifications: [],
+  submissions: [],
   settings: [
     { id: "site", websiteName: "InnoTech-Hub", contactEmail: "innotechhub@gmail.com", socialLinks: "", active: true },
   ],

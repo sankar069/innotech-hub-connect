@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { BarChart3, Calendar, CreditCard, FileText, Globe2, Image, Map, Shield, Users } from "lucide-react";
+import { Award, BarChart3, Calendar, CreditCard, FileText, Globe2, Image, Map, Shield, Users } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const adminCards = [
@@ -7,6 +7,8 @@ const adminCards = [
   { title: "Events", icon: Calendar },
   { title: "Registrations", icon: Users },
   { title: "Payments", icon: CreditCard },
+  { title: "Students", icon: Users },
+  { title: "Certificates", icon: Award },
   { title: "Team", icon: Shield },
   { title: "Partners & Sponsors", icon: BarChart3 },
   { title: "Media & Outreach", icon: Image },
@@ -38,7 +40,7 @@ export function AdminDashboardPage() {
                 {adminCards.map((card, index) => (
                   <motion.a
                     key={card.title}
-                    href={card.title === "Roadmap" ? "/admin/roadmap" : card.title === "Website Content" ? "/admin/pages" : card.title === "Events" ? "/admin/events" : card.title === "Registrations" ? "/admin/events" : card.title === "Payments" ? "/admin/payments" : card.title === "Team" ? "/admin/team" : card.title === "Partners & Sponsors" ? "/admin/partners" : card.title === "Media & Outreach" ? "/admin/media" : "/admin/dashboard"}
+                    href={card.title === "Roadmap" ? "/admin/roadmap" : card.title === "Website Content" ? "/admin/pages" : card.title === "Events" ? "/admin/events" : card.title === "Registrations" ? "/admin/events" : card.title === "Payments" ? "/admin/payments" : card.title === "Students" ? "/admin/students" : card.title === "Certificates" ? "/admin/certificates" : card.title === "Team" ? "/admin/team" : card.title === "Partners & Sponsors" ? "/admin/partners" : card.title === "Media & Outreach" ? "/admin/media" : "/admin/dashboard"}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

@@ -24,26 +24,37 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamSlugRouteImport } from './routes/team/$slug'
+import { Route as StudentSubmissionsRouteImport } from './routes/student/submissions'
 import { Route as StudentSettingsRouteImport } from './routes/student/settings'
 import { Route as StudentRegistrationsRouteImport } from './routes/student/registrations'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentPassportRouteImport } from './routes/student/passport'
+import { Route as StudentNotificationsRouteImport } from './routes/student/notifications'
 import { Route as StudentEventsRouteImport } from './routes/student/events'
 import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
+import { Route as StudentCertificatesRouteImport } from './routes/student/certificates'
 import { Route as MediaSlugRouteImport } from './routes/media/$slug'
 import { Route as EventsSlugRouteImport } from './routes/events/$slug'
 import { Route as AdminTractionRouteImport } from './routes/admin/traction'
 import { Route as AdminTeamRouteImport } from './routes/admin/team'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin/submissions'
+import { Route as AdminStudentsRouteImport } from './routes/admin/students'
 import { Route as AdminSponsorsRouteImport } from './routes/admin/sponsors'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminRoadmapRouteImport } from './routes/admin/roadmap'
 import { Route as AdminPaymentsRouteImport } from './routes/admin/payments'
 import { Route as AdminPartnersRouteImport } from './routes/admin/partners'
 import { Route as AdminPagesRouteImport } from './routes/admin/pages'
+import { Route as AdminNotificationsRouteImport } from './routes/admin/notifications'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
 import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminContactLeadsRouteImport } from './routes/admin/contact-leads'
+import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
+import { Route as StudentRegistrationsRegistrationIdRouteImport } from './routes/student/registrations/$registrationId'
 import { Route as EventsSlugRegisterRouteImport } from './routes/events/$slug/register'
+import { Route as CertificateVerifyCertificateIdRouteImport } from './routes/certificate/verify/$certificateId'
+import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin/students/$studentId'
 import { Route as AdminEventsEventIdRegistrationsRouteImport } from './routes/admin/events/$eventId/registrations'
 
 const TermsRoute = TermsRouteImport.update({
@@ -121,6 +132,11 @@ const TeamSlugRoute = TeamSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => TeamRoute,
 } as any)
+const StudentSubmissionsRoute = StudentSubmissionsRouteImport.update({
+  id: '/student/submissions',
+  path: '/student/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentSettingsRoute = StudentSettingsRouteImport.update({
   id: '/student/settings',
   path: '/student/settings',
@@ -136,6 +152,16 @@ const StudentProfileRoute = StudentProfileRouteImport.update({
   path: '/student/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentPassportRoute = StudentPassportRouteImport.update({
+  id: '/student/passport',
+  path: '/student/passport',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentNotificationsRoute = StudentNotificationsRouteImport.update({
+  id: '/student/notifications',
+  path: '/student/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentEventsRoute = StudentEventsRouteImport.update({
   id: '/student/events',
   path: '/student/events',
@@ -144,6 +170,11 @@ const StudentEventsRoute = StudentEventsRouteImport.update({
 const StudentDashboardRoute = StudentDashboardRouteImport.update({
   id: '/student/dashboard',
   path: '/student/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentCertificatesRoute = StudentCertificatesRouteImport.update({
+  id: '/student/certificates',
+  path: '/student/certificates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediaSlugRoute = MediaSlugRouteImport.update({
@@ -164,6 +195,16 @@ const AdminTractionRoute = AdminTractionRouteImport.update({
 const AdminTeamRoute = AdminTeamRouteImport.update({
   id: '/admin/team',
   path: '/admin/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/admin/submissions',
+  path: '/admin/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminStudentsRoute = AdminStudentsRouteImport.update({
+  id: '/admin/students',
+  path: '/admin/students',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSponsorsRoute = AdminSponsorsRouteImport.update({
@@ -196,6 +237,11 @@ const AdminPagesRoute = AdminPagesRouteImport.update({
   path: '/admin/pages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/admin/notifications',
+  path: '/admin/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminMediaRoute = AdminMediaRouteImport.update({
   id: '/admin/media',
   path: '/admin/media',
@@ -216,10 +262,32 @@ const AdminContactLeadsRoute = AdminContactLeadsRouteImport.update({
   path: '/admin/contact-leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
+  id: '/admin/certificates',
+  path: '/admin/certificates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentRegistrationsRegistrationIdRoute =
+  StudentRegistrationsRegistrationIdRouteImport.update({
+    id: '/$registrationId',
+    path: '/$registrationId',
+    getParentRoute: () => StudentRegistrationsRoute,
+  } as any)
 const EventsSlugRegisterRoute = EventsSlugRegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => EventsSlugRoute,
+} as any)
+const CertificateVerifyCertificateIdRoute =
+  CertificateVerifyCertificateIdRouteImport.update({
+    id: '/certificate/verify/$certificateId',
+    path: '/certificate/verify/$certificateId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminStudentsStudentIdRoute = AdminStudentsStudentIdRouteImport.update({
+  id: '/$studentId',
+  path: '/$studentId',
+  getParentRoute: () => AdminStudentsRoute,
 } as any)
 const AdminEventsEventIdRegistrationsRoute =
   AdminEventsEventIdRegistrationsRouteImport.update({
@@ -243,27 +311,38 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/team': typeof TeamRouteWithChildren
   '/terms': typeof TermsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/students': typeof AdminStudentsRouteWithChildren
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
+  '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/passport': typeof StudentPassportRoute
   '/student/profile': typeof StudentProfileRoute
-  '/student/registrations': typeof StudentRegistrationsRoute
+  '/student/registrations': typeof StudentRegistrationsRouteWithChildren
   '/student/settings': typeof StudentSettingsRoute
+  '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
+  '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesByTo {
@@ -281,27 +360,38 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/team': typeof TeamRouteWithChildren
   '/terms': typeof TermsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/students': typeof AdminStudentsRouteWithChildren
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
+  '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/passport': typeof StudentPassportRoute
   '/student/profile': typeof StudentProfileRoute
-  '/student/registrations': typeof StudentRegistrationsRoute
+  '/student/registrations': typeof StudentRegistrationsRouteWithChildren
   '/student/settings': typeof StudentSettingsRoute
+  '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
+  '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesById {
@@ -320,27 +410,38 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/team': typeof TeamRouteWithChildren
   '/terms': typeof TermsRoute
+  '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/pages': typeof AdminPagesRoute
   '/admin/partners': typeof AdminPartnersRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/roadmap': typeof AdminRoadmapRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/sponsors': typeof AdminSponsorsRoute
+  '/admin/students': typeof AdminStudentsRouteWithChildren
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
   '/media/$slug': typeof MediaSlugRoute
+  '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/passport': typeof StudentPassportRoute
   '/student/profile': typeof StudentProfileRoute
-  '/student/registrations': typeof StudentRegistrationsRoute
+  '/student/registrations': typeof StudentRegistrationsRouteWithChildren
   '/student/settings': typeof StudentSettingsRoute
+  '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
+  '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
+  '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRouteTypes {
@@ -360,27 +461,38 @@ export interface FileRouteTypes {
     | '/signup'
     | '/team'
     | '/terms'
+    | '/admin/certificates'
     | '/admin/contact-leads'
     | '/admin/dashboard'
     | '/admin/events'
     | '/admin/media'
+    | '/admin/notifications'
     | '/admin/pages'
     | '/admin/partners'
     | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
+    | '/admin/students'
+    | '/admin/submissions'
     | '/admin/team'
     | '/admin/traction'
     | '/events/$slug'
     | '/media/$slug'
+    | '/student/certificates'
     | '/student/dashboard'
     | '/student/events'
+    | '/student/notifications'
+    | '/student/passport'
     | '/student/profile'
     | '/student/registrations'
     | '/student/settings'
+    | '/student/submissions'
     | '/team/$slug'
+    | '/admin/students/$studentId'
+    | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -398,27 +510,38 @@ export interface FileRouteTypes {
     | '/signup'
     | '/team'
     | '/terms'
+    | '/admin/certificates'
     | '/admin/contact-leads'
     | '/admin/dashboard'
     | '/admin/events'
     | '/admin/media'
+    | '/admin/notifications'
     | '/admin/pages'
     | '/admin/partners'
     | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
+    | '/admin/students'
+    | '/admin/submissions'
     | '/admin/team'
     | '/admin/traction'
     | '/events/$slug'
     | '/media/$slug'
+    | '/student/certificates'
     | '/student/dashboard'
     | '/student/events'
+    | '/student/notifications'
+    | '/student/passport'
     | '/student/profile'
     | '/student/registrations'
     | '/student/settings'
+    | '/student/submissions'
     | '/team/$slug'
+    | '/admin/students/$studentId'
+    | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   id:
     | '__root__'
@@ -436,27 +559,38 @@ export interface FileRouteTypes {
     | '/signup'
     | '/team'
     | '/terms'
+    | '/admin/certificates'
     | '/admin/contact-leads'
     | '/admin/dashboard'
     | '/admin/events'
     | '/admin/media'
+    | '/admin/notifications'
     | '/admin/pages'
     | '/admin/partners'
     | '/admin/payments'
     | '/admin/roadmap'
     | '/admin/settings'
     | '/admin/sponsors'
+    | '/admin/students'
+    | '/admin/submissions'
     | '/admin/team'
     | '/admin/traction'
     | '/events/$slug'
     | '/media/$slug'
+    | '/student/certificates'
     | '/student/dashboard'
     | '/student/events'
+    | '/student/notifications'
+    | '/student/passport'
     | '/student/profile'
     | '/student/registrations'
     | '/student/settings'
+    | '/student/submissions'
     | '/team/$slug'
+    | '/admin/students/$studentId'
+    | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   fileRoutesById: FileRoutesById
 }
@@ -475,23 +609,32 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TeamRoute: typeof TeamRouteWithChildren
   TermsRoute: typeof TermsRoute
+  AdminCertificatesRoute: typeof AdminCertificatesRoute
   AdminContactLeadsRoute: typeof AdminContactLeadsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminEventsRoute: typeof AdminEventsRouteWithChildren
   AdminMediaRoute: typeof AdminMediaRoute
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminPagesRoute: typeof AdminPagesRoute
   AdminPartnersRoute: typeof AdminPartnersRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminRoadmapRoute: typeof AdminRoadmapRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSponsorsRoute: typeof AdminSponsorsRoute
+  AdminStudentsRoute: typeof AdminStudentsRouteWithChildren
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
   AdminTeamRoute: typeof AdminTeamRoute
   AdminTractionRoute: typeof AdminTractionRoute
+  StudentCertificatesRoute: typeof StudentCertificatesRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   StudentEventsRoute: typeof StudentEventsRoute
+  StudentNotificationsRoute: typeof StudentNotificationsRoute
+  StudentPassportRoute: typeof StudentPassportRoute
   StudentProfileRoute: typeof StudentProfileRoute
-  StudentRegistrationsRoute: typeof StudentRegistrationsRoute
+  StudentRegistrationsRoute: typeof StudentRegistrationsRouteWithChildren
   StudentSettingsRoute: typeof StudentSettingsRoute
+  StudentSubmissionsRoute: typeof StudentSubmissionsRoute
+  CertificateVerifyCertificateIdRoute: typeof CertificateVerifyCertificateIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -601,6 +744,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamSlugRouteImport
       parentRoute: typeof TeamRoute
     }
+    '/student/submissions': {
+      id: '/student/submissions'
+      path: '/student/submissions'
+      fullPath: '/student/submissions'
+      preLoaderRoute: typeof StudentSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/settings': {
       id: '/student/settings'
       path: '/student/settings'
@@ -622,6 +772,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student/passport': {
+      id: '/student/passport'
+      path: '/student/passport'
+      fullPath: '/student/passport'
+      preLoaderRoute: typeof StudentPassportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/notifications': {
+      id: '/student/notifications'
+      path: '/student/notifications'
+      fullPath: '/student/notifications'
+      preLoaderRoute: typeof StudentNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/events': {
       id: '/student/events'
       path: '/student/events'
@@ -634,6 +798,13 @@ declare module '@tanstack/react-router' {
       path: '/student/dashboard'
       fullPath: '/student/dashboard'
       preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/certificates': {
+      id: '/student/certificates'
+      path: '/student/certificates'
+      fullPath: '/student/certificates'
+      preLoaderRoute: typeof StudentCertificatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/media/$slug': {
@@ -662,6 +833,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/team'
       fullPath: '/admin/team'
       preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/admin/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/students': {
+      id: '/admin/students'
+      path: '/admin/students'
+      fullPath: '/admin/students'
+      preLoaderRoute: typeof AdminStudentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/sponsors': {
@@ -706,6 +891,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/admin/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/media': {
       id: '/admin/media'
       path: '/admin/media'
@@ -734,12 +926,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/certificates': {
+      id: '/admin/certificates'
+      path: '/admin/certificates'
+      fullPath: '/admin/certificates'
+      preLoaderRoute: typeof AdminCertificatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/student/registrations/$registrationId': {
+      id: '/student/registrations/$registrationId'
+      path: '/$registrationId'
+      fullPath: '/student/registrations/$registrationId'
+      preLoaderRoute: typeof StudentRegistrationsRegistrationIdRouteImport
+      parentRoute: typeof StudentRegistrationsRoute
+    }
     '/events/$slug/register': {
       id: '/events/$slug/register'
       path: '/register'
       fullPath: '/events/$slug/register'
       preLoaderRoute: typeof EventsSlugRegisterRouteImport
       parentRoute: typeof EventsSlugRoute
+    }
+    '/certificate/verify/$certificateId': {
+      id: '/certificate/verify/$certificateId'
+      path: '/certificate/verify/$certificateId'
+      fullPath: '/certificate/verify/$certificateId'
+      preLoaderRoute: typeof CertificateVerifyCertificateIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/students/$studentId': {
+      id: '/admin/students/$studentId'
+      path: '/$studentId'
+      fullPath: '/admin/students/$studentId'
+      preLoaderRoute: typeof AdminStudentsStudentIdRouteImport
+      parentRoute: typeof AdminStudentsRoute
     }
     '/admin/events/$eventId/registrations': {
       id: '/admin/events/$eventId/registrations'
@@ -806,6 +1026,30 @@ const AdminEventsRouteWithChildren = AdminEventsRoute._addFileChildren(
   AdminEventsRouteChildren,
 )
 
+interface AdminStudentsRouteChildren {
+  AdminStudentsStudentIdRoute: typeof AdminStudentsStudentIdRoute
+}
+
+const AdminStudentsRouteChildren: AdminStudentsRouteChildren = {
+  AdminStudentsStudentIdRoute: AdminStudentsStudentIdRoute,
+}
+
+const AdminStudentsRouteWithChildren = AdminStudentsRoute._addFileChildren(
+  AdminStudentsRouteChildren,
+)
+
+interface StudentRegistrationsRouteChildren {
+  StudentRegistrationsRegistrationIdRoute: typeof StudentRegistrationsRegistrationIdRoute
+}
+
+const StudentRegistrationsRouteChildren: StudentRegistrationsRouteChildren = {
+  StudentRegistrationsRegistrationIdRoute:
+    StudentRegistrationsRegistrationIdRoute,
+}
+
+const StudentRegistrationsRouteWithChildren =
+  StudentRegistrationsRoute._addFileChildren(StudentRegistrationsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
@@ -821,23 +1065,32 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TeamRoute: TeamRouteWithChildren,
   TermsRoute: TermsRoute,
+  AdminCertificatesRoute: AdminCertificatesRoute,
   AdminContactLeadsRoute: AdminContactLeadsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminEventsRoute: AdminEventsRouteWithChildren,
   AdminMediaRoute: AdminMediaRoute,
+  AdminNotificationsRoute: AdminNotificationsRoute,
   AdminPagesRoute: AdminPagesRoute,
   AdminPartnersRoute: AdminPartnersRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminRoadmapRoute: AdminRoadmapRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSponsorsRoute: AdminSponsorsRoute,
+  AdminStudentsRoute: AdminStudentsRouteWithChildren,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
   AdminTeamRoute: AdminTeamRoute,
   AdminTractionRoute: AdminTractionRoute,
+  StudentCertificatesRoute: StudentCertificatesRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   StudentEventsRoute: StudentEventsRoute,
+  StudentNotificationsRoute: StudentNotificationsRoute,
+  StudentPassportRoute: StudentPassportRoute,
   StudentProfileRoute: StudentProfileRoute,
-  StudentRegistrationsRoute: StudentRegistrationsRoute,
+  StudentRegistrationsRoute: StudentRegistrationsRouteWithChildren,
   StudentSettingsRoute: StudentSettingsRoute,
+  StudentSubmissionsRoute: StudentSubmissionsRoute,
+  CertificateVerifyCertificateIdRoute: CertificateVerifyCertificateIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import type React from "react";
+import { useState } from "react";
 import { Calendar, CreditCard } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
@@ -9,11 +10,20 @@ import { useCmsCollection } from "@/lib/cms";
 
 export function StudentRegistrationsPage() {
   const { items } = useCmsCollection<EventRegistration>("eventRegistrations");
+  const [filter, setFilter] = useState("All");
 
   return (
     <ProtectedRoute allow="student">
       {() => {
-        const registrations = getMyRegistrations().filter((registration) => items.some((item) => item.id === registration.id));
+        const allRegistrations = getMyRegistrations().filter((registration) => items.some((item) => item.id === registration.id));
+        const registrations = allRegistrations.filter((registration) => {
+          const event = getEventById(registration.eventId);
+          if (filter === "Payment Pending") return ["Pending Upload", "Under Review", "Rejected"].includes(registration.paymentStatus);
+          if (filter === "Payment Approved") return registration.paymentStatus === "Approved" || registration.paymentStatus === "Not Required";
+          if (filter === "Completed") return event?.status === "Completed";
+          if (filter === "Upcoming") return new Date(`${event?.dates?.eventStartDate ?? "2999-01-01"}T00:00`) >= new Date();
+          return true;
+        });
         return (
           <div className="min-h-screen bg-background text-foreground">
             <Navbar />
@@ -26,13 +36,16 @@ export function StudentRegistrationsPage() {
                   <h1 className="text-4xl md:text-6xl font-bold">My Registered Events</h1>
                   <p className="mt-4 text-muted-foreground text-base md:text-lg">Track registrations, payment status, event details, certificates, and updates.</p>
                 </motion.div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {["All", "Upcoming", "Completed", "Payment Pending", "Payment Approved", "Certificates Available"].map((item) => <button key={item} onClick={() => setFilter(item)} className={`rounded-xl border px-4 py-2 text-sm font-semibold ${filter === item ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{item}</button>)}
+                </div>
 
-                {registrations.length === 0 ? (
+                {allRegistrations.length === 0 ? (
                   <div className="glass-strong rounded-2xl p-6 racing-border">
-                    <p className="text-muted-foreground">No registered events yet.</p>
+                    <p className="text-muted-foreground">You have not registered for any events yet.</p>
                     <a href="/events" className="inline-flex mt-4 px-5 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold">Explore Events</a>
                   </div>
-                ) : (
+                ) : registrations.length === 0 ? <div className="glass-strong rounded-2xl p-6 racing-border text-muted-foreground">No events match this filter.</div> : (
                   <div className="grid md:grid-cols-2 gap-5">
                     {registrations.map((registration, index) => <RegistrationCard key={registration.id} registration={registration} index={index} />)}
                   </div>
@@ -66,7 +79,7 @@ function RegistrationCard({ registration, index }: { registration: EventRegistra
       {registration.adminRemarks ? <p className="mt-4 text-sm text-muted-foreground">Admin remarks: {registration.adminRemarks}</p> : null}
       <div className="flex flex-wrap gap-2 mt-5">
         <a href={`/events/${registration.eventSlug}`} className="px-4 py-2 rounded-lg border border-border text-sm font-semibold hover:border-primary/50">View Event</a>
-        <a href="/student/dashboard" className="px-4 py-2 rounded-lg bg-gradient-primary text-primary-foreground text-sm font-semibold">Dashboard</a>
+        <a href={`/student/registrations/${registration.id}`} className="px-4 py-2 rounded-lg bg-gradient-primary text-primary-foreground text-sm font-semibold">View Registration</a>
       </div>
     </motion.article>
   );

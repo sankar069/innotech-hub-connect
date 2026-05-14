@@ -13,6 +13,9 @@ export function AdminSettingsPage() {
             <p className="mt-1 text-sm text-muted-foreground">Role: Super Admin</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Change Password Placeholder</button>
+              <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Payment Settings Placeholder</button>
+              <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Storage Integration Placeholder</button>
+              <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Google Auth Integration Placeholder</button>
               <button onClick={() => { logout(); window.location.href = "/"; }} className="rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Logout</button>
             </div>
           </div>
