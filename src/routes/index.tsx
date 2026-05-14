@@ -1,11 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Navbar } from "@/components/site/Navbar";
-import { Hero } from "@/components/site/Hero";
-import {
-  About, OriginStory, EventPlatform, StudentDashboard, AITools,
-  LiveAndPodcast, SaasProducts, BusinessAndTraction, Roadmap,
-  Benefits, PartnersTeamMedia, Contact, Footer, FinalMessage,
-} from "@/components/site/Sections";
+import { Home } from "@/pages/Home";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,30 +20,5 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: Home,
 });
-
-function Index() {
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <OriginStory />
-        <EventPlatform />
-        <StudentDashboard />
-        <AITools />
-        <LiveAndPodcast />
-        <SaasProducts />
-        <BusinessAndTraction />
-        <Roadmap />
-        <Benefits />
-        <PartnersTeamMedia />
-        <FinalMessage />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
-  );
-}

@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles, Users, Rocket, Handshake, Activity, Cpu, Trophy, 
 import { Counter } from "./Counter";
 
 const stats = [
-  { label: "Revenue Generated", value: 1.5, prefix: "₹", suffix: "L+", isFloat: true },
+  { label: "Revenue Generated", value: 2.4, prefix: "₹", suffix: " Lakhs+", isFloat: true },
   { label: "Events Conducted", value: 7, suffix: "+" },
   { label: "Hackathon Collaboration", value: 1, suffix: "" },
   { label: "Participants Reached", value: 3000, suffix: "+" },
@@ -14,20 +14,7 @@ const stats = [
 export function Hero() {
   return (
     <section id="home" className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-hero">
-      {/* Grid backdrop */}
-      <div className="absolute inset-0 bg-grid moving-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)]" />
-
-      {/* Racing track lines */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent speed-line" />
-        <div className="absolute top-2/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent speed-line" style={{ animationDelay: "1s" }} />
-        <div className="race-light-trail top-[36%]" />
-        <div className="race-light-trail top-[58%]" style={{ animationDelay: "1.4s" }} />
-      </div>
-
-      {/* Glow blobs */}
-      <div className="absolute top-20 -left-20 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
-      <div className="absolute bottom-0 -right-20 w-96 h-96 rounded-full bg-accent/15 blur-3xl" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-border" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -55,7 +42,7 @@ export function Hero() {
           <div className="flex flex-wrap items-center justify-center gap-3 mb-16">
             <a
               href="#events"
-              className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold hover:scale-[1.03] transition-transform"
+              className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-primary text-primary-foreground font-semibold hover:bg-[#a93a25] transition-colors"
             >
               Explore Events
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -130,7 +117,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Floating side cards */}
+          {/* Supporting side cards */}
           <div className="hidden xl:block absolute -left-8 top-1/4 glass rounded-xl p-3 float-soft shadow-card">
             <div className="flex items-center gap-2 text-xs">
               <Activity className="h-4 w-4 text-racing-cyan" />

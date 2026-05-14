@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -29,57 +30,60 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-racing-red: var(--racing-red);
-  --color-racing-blue: var(--racing-blue);
-  --color-racing-purple: var(--racing-purple);
-  --color-racing-cyan: var(--racing-cyan);
-  --color-track: var(--track);
-  --font-display: "Orbitron", "Inter", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --color-racing-red: var(--warm-red);
+  --color-racing-blue: var(--warm-sage);
+  --color-racing-purple: var(--warm-plum);
+  --color-racing-cyan: var(--warm-teal);
+  --color-track: var(--secondary);
+  --font-display: "Playfair Display", "Libre Baskerville", Georgia, serif;
+  --font-sans: "Manrope", "Inter", system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.75rem;
-  /* F1 Racing inspired dark theme — default */
-  --background: oklch(0.09 0.025 260);
-  --foreground: oklch(0.98 0.005 240);
-  --card: oklch(0.13 0.035 262);
-  --card-foreground: oklch(0.98 0.005 240);
-  --popover: oklch(0.13 0.035 262);
-  --popover-foreground: oklch(0.98 0.005 240);
-  --primary: oklch(0.62 0.27 25); /* racing red */
-  --primary-foreground: oklch(0.98 0.005 240);
-  --secondary: oklch(0.18 0.04 264);
-  --secondary-foreground: oklch(0.98 0.005 240);
-  --muted: oklch(0.22 0.035 262);
-  --muted-foreground: oklch(0.7 0.03 256);
-  --accent: oklch(0.72 0.23 40); /* hot orange */
-  --accent-foreground: oklch(0.98 0.005 240);
-  --destructive: oklch(0.62 0.27 25);
-  --destructive-foreground: oklch(0.98 0.005 240);
-  --border: oklch(0.34 0.08 25 / 65%);
-  --input: oklch(0.22 0.04 262);
-  --ring: oklch(0.62 0.27 25);
+  --radius: 0.9rem;
+  --background: #faf7f2;
+  --foreground: #1c1714;
+  --card: #fffdf9;
+  --card-foreground: #1c1714;
+  --popover: #fffdf9;
+  --popover-foreground: #1c1714;
+  --primary: #c4472d;
+  --primary-foreground: #fffdf8;
+  --secondary: #f3efe8;
+  --secondary-foreground: #1c1714;
+  --muted: #eee5d8;
+  --muted-foreground: #7a7169;
+  --accent: #a8674b;
+  --accent-foreground: #fffdf8;
+  --destructive: #a93a25;
+  --destructive-foreground: #fffdf8;
+  --border: #e8dccb;
+  --input: #e8dccb;
+  --ring: #c4472d;
 
-  --racing-red: oklch(0.62 0.27 25);
-  --racing-blue: oklch(0.5 0.16 250);
-  --racing-purple: oklch(0.44 0.16 300);
-  --racing-cyan: oklch(0.68 0.12 210);
-  --track: oklch(0.22 0.04 262);
+  --racing-red: #c4472d;
+  --racing-blue: #657869;
+  --racing-purple: #7a4e55;
+  --racing-cyan: #4d7771;
+  --track: #f3efe8;
+  --warm-red: #c4472d;
+  --warm-sage: #657869;
+  --warm-plum: #7a4e55;
+  --warm-teal: #4d7771;
 
-  --gradient-primary: linear-gradient(135deg, oklch(0.62 0.27 25), oklch(0.72 0.23 40));
-  --gradient-racing: linear-gradient(90deg, oklch(0.62 0.27 25), oklch(0.72 0.23 40), oklch(0.98 0.005 240));
-  --gradient-hero: radial-gradient(ellipse at top, oklch(0.22 0.12 25) 0%, oklch(0.09 0.025 260) 62%);
-  --gradient-card: linear-gradient(135deg, oklch(0.16 0.045 260 / 92%), oklch(0.11 0.035 260 / 78%));
+  --gradient-primary: linear-gradient(135deg, #c4472d, #a93a25);
+  --gradient-racing: linear-gradient(90deg, #c4472d, #a8674b);
+  --gradient-hero: linear-gradient(180deg, #fffdf8 0%, #faf7f2 48%, #f3efe8 100%);
+  --gradient-card: linear-gradient(180deg, #fffdf9 0%, #fbf4ea 100%);
 
   --shadow-glow: none;
   --shadow-red-glow: none;
-  --shadow-card: 0 10px 40px -10px oklch(0 0 0 / 60%);
+  --shadow-card: 0 18px 45px -32px rgba(28, 23, 20, 0.28);
 }
 
 .dark {
-  --background: oklch(0.09 0.025 260);
-  --foreground: oklch(0.98 0.005 240);
+  --background: #faf7f2;
+  --foreground: #1c1714;
 }
 
 @layer base {
@@ -95,70 +99,84 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+    color: var(--foreground);
+  }
+  ::selection {
+    background: rgb(196 71 45 / 18%);
+  }
+  input,
+  select,
+  textarea {
+    background-color: rgb(255 253 249 / 0.9);
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(122 113 105 / 0.72);
+  }
+  button,
+  a {
+    text-underline-offset: 4px;
   }
 }
 
 @layer utilities {
   .bg-grid {
-    background-image:
-      linear-gradient(oklch(0.62 0.27 25 / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, oklch(0.62 0.27 25 / 0.08) 1px, transparent 1px);
-    background-size: 60px 60px;
+    background-image: none;
   }
   .moving-grid {
-    animation: grid-drift 18s linear infinite;
-    will-change: background-position;
+    animation: none;
   }
   .bg-hero {
     background: var(--gradient-hero);
   }
-  .bg-gradient-primary { background: var(--gradient-primary); }
-  .bg-gradient-racing { background: var(--gradient-racing); }
+  .bg-gradient-primary { background: var(--primary); }
+  .bg-gradient-racing { background: var(--primary); }
   .bg-gradient-card { background: var(--gradient-card); }
   .text-gradient-racing {
-    background: var(--gradient-racing);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    background: none;
+    color: var(--primary);
+    font-style: italic;
   }
   .text-gradient-primary {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    background: none;
+    color: var(--primary);
+    font-style: italic;
   }
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-red-glow { box-shadow: var(--shadow-red-glow); }
   .shadow-card { box-shadow: var(--shadow-card); }
+  .font-mono {
+    font-family: var(--font-sans);
+    letter-spacing: 0.08em;
+  }
 
   .glass {
-    background: oklch(0.2 0.04 262 / 50%);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid oklch(0.68 0.22 250 / 20%);
+    background: rgb(255 253 249 / 86%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgb(232 220 203 / 92%);
+    box-shadow: 0 12px 36px -30px rgba(28, 23, 20, 0.28);
   }
   .glass-strong {
-    background: oklch(0.16 0.035 260 / 80%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid oklch(0.68 0.22 250 / 25%);
+    background: rgb(255 253 249 / 94%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgb(232 220 203 / 96%);
+    box-shadow: 0 20px 50px -34px rgba(28, 23, 20, 0.28);
   }
 
   .speed-line {
-    position: relative;
-    overflow: hidden;
+    display: none;
   }
   .speed-line::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, oklch(0.82 0.15 210 / 0.6), transparent);
-    transform: translateX(-100%);
-    animation: speed-trail 3s ease-in-out infinite;
+    display: none;
   }
 
   @keyframes speed-trail {
@@ -170,15 +188,7 @@
     to { background-position: 60px 60px, 60px 60px; }
   }
   .race-light-trail {
-    position: absolute;
-    left: -25%;
-    width: 25%;
-    height: 2px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, oklch(0.82 0.15 210 / 0.95), oklch(0.62 0.27 25 / 0.75), transparent);
-    filter: drop-shadow(0 0 12px oklch(0.68 0.22 250 / 0.75));
-    animation: race-light 4.5s ease-in-out infinite;
-    will-change: transform, opacity;
+    display: none;
   }
   @keyframes race-light {
     0% { opacity: 0; transform: translateX(0) skewX(-20deg); }
@@ -192,34 +202,23 @@
   .float-soft { animation: float-soft 6s ease-in-out infinite; }
 
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px oklch(0.68 0.22 250 / 0.3); }
-    50% { box-shadow: 0 0 40px oklch(0.68 0.22 250 / 0.6); }
+    0%, 100% { box-shadow: var(--shadow-card); }
+    50% { box-shadow: var(--shadow-card); }
   }
-  .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+  .pulse-glow { animation: none; }
   .cta-glow { animation: none; }
 
   .racing-border {
     position: relative;
     background: var(--gradient-card);
-    border: 1px solid transparent;
-    background-clip: padding-box;
+    border: 1px solid var(--border);
+    background-clip: border-box;
+    box-shadow: var(--shadow-card);
   }
   .racing-border::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: var(--gradient-racing);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.5;
-    transition: opacity .3s;
-    pointer-events: none;
+    display: none;
   }
-  .racing-border:hover::before { opacity: 1; }
+  .racing-border:hover::before { opacity: 0; }
   .racing-border,
   .telemetry-card {
     transform: translateZ(0);
@@ -228,11 +227,12 @@
   .racing-border:hover,
   .telemetry-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 18px 55px -22px oklch(0.68 0.22 250 / 55%);
+    box-shadow: 0 24px 55px -34px rgba(28, 23, 20, 0.32);
   }
   .roadmap-track {
-    background-size: 220% 100%;
-    animation: track-flow 4.5s linear infinite;
+    background: var(--border);
+    background-size: auto;
+    animation: none;
   }
   @keyframes track-flow {
     from { background-position: 0% 50%; }

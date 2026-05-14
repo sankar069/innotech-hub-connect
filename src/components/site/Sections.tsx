@@ -391,7 +391,7 @@ const saasProducts = [
   {
     icon: ClipboardCheck,
     title: "Club / Team Task Manager",
-    color: "from-blue-500 to-indigo-600",
+    color: "from-[#c4472d] to-[#a8674b]",
     desc: "Replace messy WhatsApp coordination with structured task tracking, proof-based completion, and team dashboards.",
     features: ["Super admin workspace", "Member accounts", "Team & club creation", "Tasks, deadlines, priorities", "Proof upload", "Pending/completed/overdue dashboards"],
     note: "Ongoing product in active internal use by InnoTech-Hub teams.",
@@ -399,7 +399,7 @@ const saasProducts = [
   {
     icon: MapPin,
     title: "Volunteer Attendance & Tracking",
-    color: "from-rose-500 to-red-600",
+    color: "from-[#a93a25] to-[#c4472d]",
     desc: "Smart volunteer attendance and location verification for large college events and club programs.",
     features: ["Client admin & event setup", "GPS check-in/out", "Geo-tagged photo proof", "Live tracking option", "Team lead verification", "Volunteer reports"],
     note: "Upcoming product for event duty tracking, used only with consent.",
@@ -407,7 +407,7 @@ const saasProducts = [
   {
     icon: FolderLock,
     title: "College Repository System",
-    color: "from-violet-500 to-purple-600",
+    color: "from-[#7a4e55] to-[#a8674b]",
     desc: "Inspection-ready document repository for NBA, NAAC, IQAC, JNTU, departments, faculty, and clubs.",
     features: ["Department & faculty folders", "Role-based access", "Approval workflow", "Audit logs & versioning", "Missing document tracker", "Inspection-ready reports"],
     note: "Upcoming SaaS to solve the chaos of Drive, WhatsApp, pendrives, and faculty laptops.",
@@ -415,7 +415,7 @@ const saasProducts = [
   {
     icon: BellRing,
     title: "Faculty Attendance & Smart Alerts",
-    color: "from-amber-500 to-orange-600",
+    color: "from-[#a8674b] to-[#c4472d]",
     desc: "Smart academic workflow — timetables, biometric data, alerts, and reports unified into one system.",
     features: ["Class alert system", "Biometric notification", "Universal biometric connector (eSSL, ZKTeco, Hikvision, Matrix…)", "BioSync local agent", "HOD escalation", "Department reports"],
     note: "Positioned as academic workflow & visibility — not surveillance.",
@@ -441,7 +441,7 @@ export function SaasProducts() {
               transition={{ delay: i * 0.1 }}
               className="glass-strong rounded-2xl p-7 racing-border hover:-translate-y-1 transition-transform group relative overflow-hidden"
             >
-              <div className={`absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gradient-to-br ${p.color} opacity-20 blur-2xl`} />
+              <div className="absolute inset-x-7 top-0 h-px bg-border" />
               <div className="relative">
                 <div className={`h-14 w-14 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center mb-5 shadow-card`}>
                   <p.icon className="h-7 w-7 text-white" />
@@ -473,7 +473,7 @@ const revenueChannels = [
   "College repository plans", "Volunteer tracking plans", "Task manager plans", "Faculty alert plans",
 ];
 const tractionStats = [
-  { v: 1.5, suffix: "L+", prefix: "₹", label: "Revenue Generated", isFloat: true },
+  { v: 2.4, suffix: " Lakhs+", prefix: "₹", label: "Revenue Generated", isFloat: true },
   { v: 7, suffix: "+", label: "Tech & Non-Tech Events" },
   { v: 1, suffix: "", label: "Hackathon with Gemini Google" },
   { v: 3000, suffix: "+", label: "Participants Reached" },
@@ -492,7 +492,7 @@ export function BusinessAndTraction() {
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Revenue Built on <span className="text-gradient-racing">Real Value</span></h2>
             <p className="text-muted-foreground mb-6">
-              Already generated <span className="text-foreground font-semibold">₹1.5L+ revenue</span>, fully reinvested into events, hackathons,
+              Already generated <span className="text-foreground font-semibold">₹2.4 Lakhs+ revenue</span>, fully reinvested into events, hackathons,
               and product. Our promise: keep student platform fees ultra-low — and zero where possible.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -918,7 +918,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <a href="#home" className="flex items-center gap-2 font-display font-bold text-lg mb-4">
+            <a href="/" className="flex items-center gap-2 font-display font-bold text-lg mb-4">
               <img src="/ith-logo.jpeg" alt="InnoTech-Hub logo" className="h-9 w-9 rounded-lg border border-primary/40 object-cover" />
               <span>InnoTech<span className="text-gradient-racing">-Hub</span></span>
             </a>
@@ -930,16 +930,22 @@ export function Footer() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">Explore</h4>
             <ul className="space-y-2 text-sm">
-              {["About", "Events", "SaaS Products", "Roadmap", "Team"].map((l) => (
-                <li key={l}><a href={`#${l.toLowerCase().replace(/\s+/g, "")}`} className="text-foreground/80 hover:text-primary transition-colors">{l}</a></li>
+              {[
+                ["About", "/#about"],
+                ["Events", "/events"],
+                ["SaaS Products", "/pricing"],
+                ["Roadmap", "/roadmap"],
+                ["Team", "/team"],
+              ].map(([label, href]) => (
+                <li key={label}><a href={href} className="text-foreground/80 hover:text-primary transition-colors">{label}</a></li>
               ))}
             </ul>
           </div>
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">Connect</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#partners" className="text-foreground/80 hover:text-primary transition-colors">Partners</a></li>
-              <li><a href="#contact" className="text-foreground/80 hover:text-primary transition-colors">Contact</a></li>
+              <li><a href="/#partners" className="text-foreground/80 hover:text-primary transition-colors">Partners</a></li>
+              <li><a href="/contact" className="text-foreground/80 hover:text-primary transition-colors">Contact</a></li>
               <li><a href="#" className="text-foreground/80 hover:text-primary transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="text-foreground/80 hover:text-primary transition-colors">Terms</a></li>
             </ul>
