@@ -52,6 +52,7 @@ import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminContactLeadsRouteImport } from './routes/admin/contact-leads'
 import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
 import { Route as StudentRegistrationsRegistrationIdRouteImport } from './routes/student/registrations/$registrationId'
+import { Route as MediaSlugPostSlugRouteImport } from './routes/media/$slug/$postSlug'
 import { Route as EventsSlugRegisterRouteImport } from './routes/events/$slug/register'
 import { Route as CertificateVerifyCertificateIdRouteImport } from './routes/certificate/verify/$certificateId'
 import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin/students/$studentId'
@@ -273,6 +274,11 @@ const StudentRegistrationsRegistrationIdRoute =
     path: '/$registrationId',
     getParentRoute: () => StudentRegistrationsRoute,
   } as any)
+const MediaSlugPostSlugRoute = MediaSlugPostSlugRouteImport.update({
+  id: '/$postSlug',
+  path: '/$postSlug',
+  getParentRoute: () => MediaSlugRoute,
+} as any)
 const EventsSlugRegisterRoute = EventsSlugRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -328,7 +334,7 @@ export interface FileRoutesByFullPath {
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
-  '/media/$slug': typeof MediaSlugRoute
+  '/media/$slug': typeof MediaSlugRouteWithChildren
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
@@ -377,7 +384,7 @@ export interface FileRoutesByTo {
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
-  '/media/$slug': typeof MediaSlugRoute
+  '/media/$slug': typeof MediaSlugRouteWithChildren
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
@@ -427,7 +435,7 @@ export interface FileRoutesById {
   '/admin/team': typeof AdminTeamRoute
   '/admin/traction': typeof AdminTractionRoute
   '/events/$slug': typeof EventsSlugRouteWithChildren
-  '/media/$slug': typeof MediaSlugRoute
+  '/media/$slug': typeof MediaSlugRouteWithChildren
   '/student/certificates': typeof StudentCertificatesRoute
   '/student/dashboard': typeof StudentDashboardRoute
   '/student/events': typeof StudentEventsRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
+  '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   fileRoutesByTo: FileRoutesByTo
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   id:
@@ -590,6 +601,7 @@ export interface FileRouteTypes {
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/events/$slug/register'
+    | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
     | '/admin/events/$eventId/registrations'
   fileRoutesById: FileRoutesById
@@ -940,6 +952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentRegistrationsRegistrationIdRouteImport
       parentRoute: typeof StudentRegistrationsRoute
     }
+    '/media/$slug/$postSlug': {
+      id: '/media/$slug/$postSlug'
+      path: '/$postSlug'
+      fullPath: '/media/$slug/$postSlug'
+      preLoaderRoute: typeof MediaSlugPostSlugRouteImport
+      parentRoute: typeof MediaSlugRoute
+    }
     '/events/$slug/register': {
       id: '/events/$slug/register'
       path: '/register'
@@ -994,12 +1013,24 @@ const EventsRouteChildren: EventsRouteChildren = {
 const EventsRouteWithChildren =
   EventsRoute._addFileChildren(EventsRouteChildren)
 
+interface MediaSlugRouteChildren {
+  MediaSlugPostSlugRoute: typeof MediaSlugPostSlugRoute
+}
+
+const MediaSlugRouteChildren: MediaSlugRouteChildren = {
+  MediaSlugPostSlugRoute: MediaSlugPostSlugRoute,
+}
+
+const MediaSlugRouteWithChildren = MediaSlugRoute._addFileChildren(
+  MediaSlugRouteChildren,
+)
+
 interface MediaRouteChildren {
-  MediaSlugRoute: typeof MediaSlugRoute
+  MediaSlugRoute: typeof MediaSlugRouteWithChildren
 }
 
 const MediaRouteChildren: MediaRouteChildren = {
-  MediaSlugRoute: MediaSlugRoute,
+  MediaSlugRoute: MediaSlugRouteWithChildren,
 }
 
 const MediaRouteWithChildren = MediaRoute._addFileChildren(MediaRouteChildren)

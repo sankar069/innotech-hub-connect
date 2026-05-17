@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, EyeOff, Globe2, Lock, Mail, User } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Globe2, Lock, Mail, User } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
@@ -13,6 +13,7 @@ export function AuthPage({ initialTab = "login" }: { initialTab?: AuthTab }) {
   const navigate = useNavigate();
   const [tab, setTab] = useState<AuthTab>(initialTab);
   const [error, setError] = useState("");
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
@@ -63,7 +64,12 @@ export function AuthPage({ initialTab = "login" }: { initialTab?: AuthTab }) {
   };
 
   const googlePlaceholder = () => {
-    setError("Google sign-in is ready for OAuth setup. Please use email and password for now.");
+    // TODO: Connect Google OAuth after MongoDB/auth backend setup.
+    setError("Google Sign-In will be available after backend authentication setup.");
+  };
+
+  const togglePassword = (key: string) => {
+    setVisiblePasswords((current) => ({ ...current, [key]: !current[key] }));
   };
 
   return (
@@ -140,11 +146,15 @@ export function AuthPage({ initialTab = "login" }: { initialTab?: AuthTab }) {
                 />
                 <AuthField
                   label="Password"
-                  type="password"
+                  type={visiblePasswords.login ? "text" : "password"}
                   placeholder="Enter your password"
                   value={loginForm.password}
                   onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
                   icon={<EyeOff className="h-4 w-4" />}
+                  passwordToggle={{
+                    visible: Boolean(visiblePasswords.login),
+                    onToggle: () => togglePassword("login"),
+                  }}
                   required
                 />
                 <div className="flex items-center justify-between gap-3 text-sm">
@@ -162,8 +172,8 @@ export function AuthPage({ initialTab = "login" }: { initialTab?: AuthTab }) {
                 <AuthField label="Full Name" placeholder="Your full name" value={signupForm.name} onChange={(event) => setSignupForm((current) => ({ ...current, name: event.target.value }))} icon={<User className="h-4 w-4" />} required />
                 <AuthField label="Email" type="email" placeholder="innotechhub@gmail.com" value={signupForm.email} onChange={(event) => setSignupForm((current) => ({ ...current, email: event.target.value }))} icon={<Mail className="h-4 w-4" />} required />
                 <div className="grid md:grid-cols-2 gap-4">
-                  <AuthField label="Password" type="password" placeholder="Enter your password" value={signupForm.password} onChange={(event) => setSignupForm((current) => ({ ...current, password: event.target.value }))} required />
-                  <AuthField label="Confirm Password" type="password" placeholder="Confirm password" value={signupForm.confirmPassword} onChange={(event) => setSignupForm((current) => ({ ...current, confirmPassword: event.target.value }))} required />
+                  <AuthField label="Password" type={visiblePasswords.signup ? "text" : "password"} placeholder="Enter your password" value={signupForm.password} onChange={(event) => setSignupForm((current) => ({ ...current, password: event.target.value }))} passwordToggle={{ visible: Boolean(visiblePasswords.signup), onToggle: () => togglePassword("signup") }} required />
+                  <AuthField label="Confirm Password" type={visiblePasswords.confirm ? "text" : "password"} placeholder="Confirm password" value={signupForm.confirmPassword} onChange={(event) => setSignupForm((current) => ({ ...current, confirmPassword: event.target.value }))} passwordToggle={{ visible: Boolean(visiblePasswords.confirm), onToggle: () => togglePassword("confirm") }} required />
                 </div>
                 <AuthField label="College / Organization" placeholder="Acme University" value={signupForm.college} onChange={(event) => setSignupForm((current) => ({ ...current, college: event.target.value }))} required />
                 <div className="grid md:grid-cols-2 gap-4">
@@ -191,10 +201,12 @@ export function AuthPage({ initialTab = "login" }: { initialTab?: AuthTab }) {
 function AuthField({
   label,
   icon,
+  passwordToggle,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   icon?: React.ReactNode;
+  passwordToggle?: { visible: boolean; onToggle: () => void };
 }) {
   return (
     <div>
@@ -203,8 +215,13 @@ function AuthField({
         {icon && <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">{icon}</span>}
         <input
           {...props}
-          className={`w-full bg-background/60 border border-border rounded-xl py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${icon ? "pl-11 pr-4" : "px-4"}`}
+          className={`w-full bg-background/60 border border-border rounded-xl py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${icon ? "pl-11" : "pl-4"} ${passwordToggle ? "pr-12" : "pr-4"}`}
         />
+        {passwordToggle ? (
+          <button type="button" onClick={passwordToggle.onToggle} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-muted-foreground hover:text-primary" aria-label={passwordToggle.visible ? "Hide password" : "Show password"}>
+            {passwordToggle.visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        ) : null}
       </div>
     </div>
   );

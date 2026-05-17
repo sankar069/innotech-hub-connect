@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type React from "react";
 import { Download, Plus, Save } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import { eventCategories, eventStatuses, eventTypes, getEvents, participationModes, paymentTypes, registrationsToCsv, saveEvents, type EventItem } from "@/lib/events";
 import { slugify, useCmsCollection } from "@/lib/cms";
 
@@ -26,7 +27,7 @@ const blankEvent = (): EventItem => ({
   location: { meetingPlatform: "", meetingLink: "", backupLink: "", communityLink: "", venueName: "", collegeName: "", address: "", city: "", state: "", pincode: "", mapsLink: "" },
   media: { banner: "", poster: "", thumbnail: "", mobileBanner: "" },
   rounds: [],
-  rules: { eligibility: "", regulations: "", guidelines: "", teamSize: "", submissionFormat: "", judgingCriteria: "", disqualification: "", conduct: "", notes: "", documents: "" },
+  rules: { eligibility: "", regulations: "", guidelines: "", teamSize: "", submissionFormat: "", judgingCriteria: "", disqualification: "", conduct: "", notes: "", documents: "", ruleDocument: "", brochureDocument: "" },
   rewards: { totalPrizePool: "", winnerPrize: "", runnerUpPrize: "", secondRunnerUpPrize: "", specialPrizes: "", certificates: "", goodies: "", internship: "", mentorship: "", sponsorRewards: "", benefits: "" },
   contact: { name: "", role: "", email: "", phone: "", whatsapp: "", discord: "", telegram: "", message: "" },
   payment: { type: "Free Event", amount: 0, currency: "INR", upiId: "", qrImage: "", instructions: "", deadline: "", refundPolicy: "", verificationNote: "" },
@@ -116,7 +117,9 @@ export function AdminEventsPage() {
                 <Field label="Short Description" value={editing.shortDescription} onChange={(v) => update("shortDescription", v)} textarea />
                 <Field label="Full Event Description" value={editing.fullDescription ?? ""} onChange={(v) => update("fullDescription", v)} textarea />
                 <Field label="Organizer Name" value={editing.organizerName ?? ""} onChange={(v) => update("organizerName", v)} />
-                <Field label="Organizer Logo/Image" value={editing.organizerLogo ?? ""} onChange={(v) => update("organizerLogo", v)} />
+                <div>
+                  <FileUploadField label="Organizer Logo" value={editing.organizerLogo ?? ""} onChange={(v) => update("organizerLogo", v)} helper="JPG, PNG, WebP accepted." />
+                </div>
                 <Field label="Hosted By / College / Company / Community" value={editing.hostedBy ?? ""} onChange={(v) => update("hostedBy", v)} />
                 <Field label="Event Website / External Link" value={editing.externalLink ?? ""} onChange={(v) => update("externalLink", v)} />
                 <CheckField label="Featured Event" checked={Boolean(editing.featured)} onChange={(v) => update("featured", v)} />
@@ -132,9 +135,11 @@ export function AdminEventsPage() {
               </FormGrid>
 
               <FormGrid title="Event Banner / Poster Upload">
-                <Help text="Banner: 1920 x 1080 px, JPG/PNG/WebP. Used on event detail page hero." />
-                <Help text="Poster: 1080 x 1350 px. Square thumbnail: 1080 x 1080 px. Mobile banner: 1080 x 1920 px. File storage can later connect to Vercel Blob, Supabase Storage, Firebase Storage, or Cloudinary." />
-                {["banner", "poster", "thumbnail", "mobileBanner"].map((key) => <Field key={key} label={key} value={String(editing.media?.[key] ?? "")} onChange={(v) => updateNested("media", key, v)} preview />)}
+                <Help text="Accepted image formats: JPG, PNG, WebP. File size validation is kept local for now and can be tightened after storage setup." />
+                <FileUploadField label="Event Banner Image" value={String(editing.media?.banner ?? "")} onChange={(v) => updateNested("media", "banner", v)} helper="Recommended: 1920 x 1080 px." />
+                <FileUploadField label="Event Poster Image" value={String(editing.media?.poster ?? "")} onChange={(v) => updateNested("media", "poster", v)} helper="Recommended: 1080 x 1350 px." />
+                <FileUploadField label="Square Thumbnail Image" value={String(editing.media?.thumbnail ?? "")} onChange={(v) => updateNested("media", "thumbnail", v)} helper="Recommended: 1080 x 1080 px." />
+                <FileUploadField label="Mobile Banner Image" value={String(editing.media?.mobileBanner ?? "")} onChange={(v) => updateNested("media", "mobileBanner", v)} helper="Recommended: 1080 x 1920 px." />
               </FormGrid>
 
               <FormGrid title="Rounds / Stages">
@@ -143,6 +148,8 @@ export function AdminEventsPage() {
 
               <FormGrid title="Rules, Eligibility & Guidelines">
                 {["eligibility", "regulations", "guidelines", "teamSize", "submissionFormat", "judgingCriteria", "disqualification", "conduct", "notes", "documents"].map((key) => <Field key={key} label={key} value={String(editing.rules?.[key] ?? "")} onChange={(v) => updateNested("rules", key, v)} textarea={["regulations", "guidelines", "notes"].includes(key)} />)}
+                <FileUploadField label="Rule Document" value={String(editing.rules?.ruleDocument ?? "")} onChange={(v) => updateNested("rules", "ruleDocument", v)} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX." />
+                <FileUploadField label="Brochure / Document" value={String(editing.rules?.brochureDocument ?? "")} onChange={(v) => updateNested("rules", "brochureDocument", v)} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX." />
               </FormGrid>
 
               <FormGrid title="Rewards / Certificates">
@@ -156,7 +163,10 @@ export function AdminEventsPage() {
               <FormGrid title="Free / Paid Event Option">
                 <Select label="Payment Type" value={String(editing.payment?.type ?? "Free Event")} onChange={(v) => updateNested("payment", "type", v)} options={paymentTypes} placeholder="Select payment type" />
                 <Field label="Registration Fee Amount" value={String(editing.payment?.amount ?? 0)} onChange={(v) => updateNested("payment", "amount", Number(v))} />
-                {["currency", "upiId", "qrImage", "instructions", "deadline", "refundPolicy", "verificationNote"].map((key) => <Field key={key} label={key} value={String(editing.payment?.[key] ?? "")} onChange={(v) => updateNested("payment", key, v)} textarea={["instructions", "refundPolicy", "verificationNote"].includes(key)} preview={key === "qrImage"} />)}
+                <Field label="currency" value={String(editing.payment?.currency ?? "")} onChange={(v) => updateNested("payment", "currency", v)} />
+                <Field label="upiId" value={String(editing.payment?.upiId ?? "")} onChange={(v) => updateNested("payment", "upiId", v)} />
+                <FileUploadField label="Payment QR Scanner Image" value={String(editing.payment?.qrImage ?? "")} onChange={(v) => updateNested("payment", "qrImage", v)} helper="Accepted: JPG, PNG, WebP." />
+                {["instructions", "deadline", "refundPolicy", "verificationNote"].map((key) => <Field key={key} label={key} value={String(editing.payment?.[key] ?? "")} onChange={(v) => updateNested("payment", key, v)} textarea={["instructions", "refundPolicy", "verificationNote"].includes(key)} />)}
               </FormGrid>
 
               <div className="flex flex-wrap gap-3">

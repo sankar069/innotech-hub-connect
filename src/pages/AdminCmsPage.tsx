@@ -1,4 +1,5 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { useState } from "react";
 import { CmsModule, type CmsField } from "@/components/admin/CmsModule";
 import type { CmsCollection } from "@/lib/cms";
 
@@ -94,9 +95,10 @@ const configs: Record<string, { title: string; description: string; collection: 
     fields: [
       { key: "name", label: "Member Name", required: true },
       { key: "role", label: "Role / Designation" },
-      { key: "category", label: "Team Category Slug", required: true },
-      { key: "profileImage", label: "Profile Image URL", type: "image" },
+      { key: "category", label: "Team Category", type: "select", options: ["founders-core", "event-operations", "tech-product", "design-media", "community", "partnerships"], required: true },
+      { key: "profileImage", label: "Profile Image Upload", type: "image", helper: "Use square or 4:5 portrait images. JPG, PNG, WebP accepted." },
       { key: "bio", label: "Short Bio", type: "textarea" },
+      { key: "message", label: "Motivation / Message / Quote", type: "textarea" },
       { key: "skills", label: "Skills / Responsibilities", type: "textarea" },
       { key: "linkedinUrl", label: "LinkedIn URL" },
       { key: "githubUrl", label: "GitHub URL" },
@@ -112,7 +114,7 @@ const configs: Record<string, { title: string; description: string; collection: 
     collection: "partners",
     fields: [
       { key: "name", label: "Partner Name", required: true },
-      { key: "logoUrl", label: "Logo/Image URL", type: "image" },
+      { key: "logoUrl", label: "Logo/Image Upload", type: "image", helper: "JPG, PNG, WebP accepted. A fallback hosted URL can still be pasted below." },
       { key: "websiteUrl", label: "Website URL" },
       { key: "shortDescription", label: "Short Description", type: "textarea" },
       { key: "category", label: "Category / Type" },
@@ -142,7 +144,7 @@ const configs: Record<string, { title: string; description: string; collection: 
     collection: "sponsors",
     fields: [
       { key: "name", label: "Sponsor Name", required: true },
-      { key: "logoUrl", label: "Logo/Image URL", type: "image" },
+      { key: "logoUrl", label: "Logo/Image Upload", type: "image", helper: "JPG, PNG, WebP accepted. A fallback hosted URL can still be pasted below." },
       { key: "websiteUrl", label: "Website URL" },
       { key: "shortDescription", label: "Short Description", type: "textarea" },
       { key: "sponsorshipLevel", label: "Sponsorship Level", type: "select", options: ["Platinum", "Gold", "Silver", "Bronze", "Community Partner", "Other"] },
@@ -169,11 +171,15 @@ const configs: Record<string, { title: string; description: string; collection: 
     collection: "mediaPosts",
     fields: [
       { key: "title", label: "Media Title", required: true },
-      { key: "category", label: "Category Slug", required: true },
-      { key: "thumbnail", label: "Cover Image / Thumbnail", type: "image" },
+      { key: "category", label: "Category", type: "select", options: ["event-highlights", "student-testimonials", "podcast-clips", "hackathon-stories", "tech-fest-moments", "partner-shoutouts"], required: true },
+      { key: "slug", label: "Post Slug" },
+      { key: "thumbnail", label: "Cover Image Upload", type: "image", helper: "JPG, PNG, WebP accepted." },
+      { key: "gallery", label: "Multiple Image Upload / Gallery", type: "gallery", helper: "Choose one or more JPG, PNG, or WebP images." },
       { key: "shortDescription", label: "Short Description", type: "textarea" },
       { key: "content", label: "Full Description / Content", type: "textarea" },
+      { key: "videoFile", label: "Video Upload Placeholder", type: "video", helper: "Mock preview only until storage is connected." },
       { key: "videoUrl", label: "Video URL" },
+      { key: "audioFile", label: "Podcast / Audio Upload Placeholder", type: "audio", helper: "Mock preview only until storage is connected." },
       { key: "audioUrl", label: "Podcast / Audio URL" },
       { key: "externalLink", label: "External Link" },
       { key: "eventName", label: "Event Name" },
@@ -222,12 +228,13 @@ export function AdminRoadmapCmsPage() {
 }
 
 export function AdminTeamCmsPage() {
+  const [tab, setTab] = useState<"categories" | "members">("categories");
   return (
     <AdminLayout title="Team CMS">
       {() => (
-        <div className="space-y-8">
-          <CmsModule {...configs.team} />
-          <CmsModule {...configs["team-members"]} />
+        <div className="space-y-6">
+          <Tabs active={tab} onChange={setTab} tabs={[["categories", "Team Categories"], ["members", "Team Members"]]} />
+          {tab === "categories" ? <CmsModule {...configs.team} /> : <CmsModule {...configs["team-members"]} />}
         </div>
       )}
     </AdminLayout>
@@ -235,12 +242,13 @@ export function AdminTeamCmsPage() {
 }
 
 export function AdminMediaCmsPage() {
+  const [tab, setTab] = useState<"categories" | "posts">("categories");
   return (
     <AdminLayout title="Media & Outreach CMS">
       {() => (
-        <div className="space-y-8">
-          <CmsModule {...configs["media-categories"]} />
-          <CmsModule {...configs["media-posts"]} />
+        <div className="space-y-6">
+          <Tabs active={tab} onChange={setTab} tabs={[["categories", "Media Categories"], ["posts", "Media Posts"]]} />
+          {tab === "categories" ? <CmsModule {...configs["media-categories"]} /> : <CmsModule {...configs["media-posts"]} />}
         </div>
       )}
     </AdminLayout>
@@ -257,5 +265,17 @@ export function AdminTractionCmsPage() {
         </div>
       )}
     </AdminLayout>
+  );
+}
+
+function Tabs<T extends string>({ active, onChange, tabs }: { active: T; onChange: (tab: T) => void; tabs: Array<[T, string]> }) {
+  return (
+    <div className="inline-grid grid-cols-2 rounded-xl border border-border bg-card/50 p-1">
+      {tabs.map(([value, label]) => (
+        <button key={value} type="button" onClick={() => onChange(value)} className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${active === value ? "bg-gradient-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }

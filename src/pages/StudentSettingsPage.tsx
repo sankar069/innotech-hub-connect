@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type React from "react";
-import { LogOut, Settings } from "lucide-react";
+import { Eye, EyeOff, LogOut, Settings } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -18,6 +18,7 @@ export function StudentSettingsPage() {
 function SettingsPanel() {
   const [profile, setProfile] = useState<StudentProfile>(() => getCurrentStudentProfile() as StudentProfile);
   const [message, setMessage] = useState("");
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [prefs, setPrefs] = useState({ reminders: true, payments: true, certificates: true, announcements: true, visible: false, recommendations: true, consent: true });
 
   const updateProfile = (key: keyof StudentProfile, value: string) => setProfile((current) => ({ ...current, [key]: value }));
@@ -45,9 +46,9 @@ function SettingsPanel() {
               <Field label="Email" value={profile.email ?? ""} onChange={() => undefined} readonly />
               <Field label="Phone" value={profile.phone ?? ""} onChange={(value) => updateProfile("phone", value)} />
               <div className="grid md:grid-cols-3 gap-3">
-                <Field label="Current Password" value="" onChange={() => undefined} type="password" />
-                <Field label="New Password" value="" onChange={() => undefined} type="password" />
-                <Field label="Confirm New Password" value="" onChange={() => undefined} type="password" />
+                <Field label="Current Password" value="" onChange={() => undefined} type={visiblePasswords.current ? "text" : "password"} passwordToggle={{ visible: Boolean(visiblePasswords.current), onToggle: () => setVisiblePasswords((current) => ({ ...current, current: !current.current })) }} />
+                <Field label="New Password" value="" onChange={() => undefined} type={visiblePasswords.next ? "text" : "password"} passwordToggle={{ visible: Boolean(visiblePasswords.next), onToggle: () => setVisiblePasswords((current) => ({ ...current, next: !current.next })) }} />
+                <Field label="Confirm New Password" value="" onChange={() => undefined} type={visiblePasswords.confirm ? "text" : "password"} passwordToggle={{ visible: Boolean(visiblePasswords.confirm), onToggle: () => setVisiblePasswords((current) => ({ ...current, confirm: !current.confirm })) }} />
               </div>
             </Panel>
 
@@ -100,8 +101,8 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   return <section className="glass-strong rounded-2xl p-6 racing-border"><h2 className="text-2xl font-bold mb-4">{title}</h2><div className="space-y-4">{children}</div></section>;
 }
 
-function Field({ label, value, onChange, type = "text", readonly }: { label: string; value: string; onChange: (value: string) => void; type?: string; readonly?: boolean }) {
-  return <label><span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">{label}</span><input type={type} value={value} disabled={readonly} onChange={(event) => onChange(event.target.value)} className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary disabled:opacity-70" /></label>;
+function Field({ label, value, onChange, type = "text", readonly, passwordToggle }: { label: string; value: string; onChange: (value: string) => void; type?: string; readonly?: boolean; passwordToggle?: { visible: boolean; onToggle: () => void } }) {
+  return <label><span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">{label}</span><span className="relative block"><input type={type} value={value} disabled={readonly} onChange={(event) => onChange(event.target.value)} className={`w-full bg-background/60 border border-border rounded-xl py-3 text-sm focus:outline-none focus:border-primary disabled:opacity-70 pl-4 ${passwordToggle ? "pr-12" : "pr-4"}`} />{passwordToggle ? <button type="button" onClick={passwordToggle.onToggle} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-muted-foreground hover:text-primary" aria-label={passwordToggle.visible ? "Hide password" : "Show password"}>{passwordToggle.visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button> : null}</span></label>;
 }
 
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {

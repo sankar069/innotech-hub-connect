@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Upload } from "lucide-react";
+import { CreditCard } from "lucide-react";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import { useNavigate } from "@tanstack/react-router";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
@@ -175,11 +176,7 @@ export function EventRegistrationPage({ slug }: { slug: string }) {
                         <p className="text-sm text-muted-foreground">{String(event.payment?.instructions ?? "")}</p>
                         {event.payment?.qrImage ? <img src={String(event.payment.qrImage)} alt="Payment QR" className="mt-4 h-40 w-40 rounded-xl object-cover border border-border" /> : null}
                       </div>
-                      <Field label="Payment Screenshot URL" value={form.screenshotUrl} onChange={(v) => update("screenshotUrl", v)} required />
-                      <label>
-                        <span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">File Upload Placeholder</span>
-                        <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground"><Upload className="h-4 w-4 inline mr-2" />Connect Vercel Blob, Supabase Storage, Firebase Storage, or Cloudinary later.</div>
-                      </label>
+                      <FileUploadField label="Payment Screenshot Upload" value={form.screenshotUrl} onChange={(v) => update("screenshotUrl", v)} required helper="Required for paid events. Accepted: JPG, PNG, WebP." />
                       <Field label="UPI Transaction ID / Reference Number" value={form.transactionId} onChange={(v) => update("transactionId", v)} required />
                       <Field label="Payment Sender Name" value={form.senderName} onChange={(v) => update("senderName", v)} />
                       <Field label="Payment Date" type="date" value={form.paymentDate} onChange={(v) => update("paymentDate", v)} />

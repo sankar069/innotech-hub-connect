@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type React from "react";
 import { motion } from "framer-motion";
-import { Save, Upload, UserRound } from "lucide-react";
+import { Save, UserRound } from "lucide-react";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -55,9 +56,8 @@ function ProfileEditor() {
           <div className="grid lg:grid-cols-[280px_1fr] gap-6">
             <div className="glass-strong rounded-2xl p-6 racing-border h-fit">
               {profile.profilePhoto ? <img src={profile.profilePhoto} alt="Profile preview" className="h-36 w-36 rounded-2xl object-cover border border-border mx-auto" /> : <div className="h-36 w-36 rounded-2xl bg-gradient-primary flex items-center justify-center mx-auto"><UserRound className="h-12 w-12 text-primary-foreground" /></div>}
-              <Field label="Profile Photo URL" value={profile.profilePhoto ?? ""} onChange={(value) => update("profilePhoto", value)} />
-              <div className="mt-4 rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                <Upload className="h-4 w-4 inline mr-2" /> Upload placeholder. Connect Vercel Blob, Supabase Storage, Firebase Storage, or Cloudinary later.
+              <div className="mt-4">
+                <FileUploadField label="Profile Photo" value={profile.profilePhoto ?? ""} onChange={(value) => update("profilePhoto", value)} helper="JPG, PNG, WebP accepted. Uses a local preview until storage is connected." />
               </div>
             </div>
 
@@ -80,7 +80,7 @@ function ProfileEditor() {
                 <Field label="LinkedIn URL" value={profile.linkedIn ?? ""} onChange={(value) => update("linkedIn", value)} />
                 <Field label="GitHub URL" value={profile.github ?? ""} onChange={(value) => update("github", value)} />
                 <Field label="Portfolio URL" value={profile.portfolio ?? ""} onChange={(value) => update("portfolio", value)} />
-                <Field label="Resume URL" value={profile.resumeUrl ?? ""} onChange={(value) => update("resumeUrl", value)} />
+                <FileUploadField label="Resume Upload" value={profile.resumeUrl ?? ""} onChange={(value) => update("resumeUrl", value)} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX. A hosted resume URL can still be pasted if needed." />
                 <Field label="Short Bio" value={profile.bio ?? ""} onChange={(value) => update("bio", value)} textarea />
               </FormSection>
 

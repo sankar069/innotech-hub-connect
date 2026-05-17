@@ -63,6 +63,9 @@ export type Submission = CmsItem & {
   demoVideoLink: string;
   pptLink: string;
   liveProjectLink: string;
+  projectFile?: string;
+  pptFile?: string;
+  supportingDocument?: string;
   status: "Submitted" | "Reviewed" | "Shortlisted" | "Rejected";
   adminNote?: string;
   createdAt: string;

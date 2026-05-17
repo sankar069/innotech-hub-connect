@@ -25,7 +25,7 @@ export function MediaCategoryPage({ slug }: { slug: string }) {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {categoryPosts.length === 0 && <div className="glass rounded-2xl p-6 text-sm text-muted-foreground md:col-span-2 lg:col-span-3">No items added yet</div>}
             {categoryPosts.map((post, index) => (
-              <motion.a key={post.id} href={String(post.externalLink ?? "#")} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="glass-strong rounded-2xl p-6 racing-border">
+              <motion.a key={post.id} href={`/media/${slug}/${String(post.slug ?? post.id)}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="glass-strong rounded-2xl p-6 racing-border">
                 {post.thumbnail ? <img src={String(post.thumbnail)} alt={String(post.title)} className="aspect-video w-full rounded-xl object-cover border border-border mb-4" /> : <Video className="h-8 w-8 text-primary mb-4" />}
                 <h2 className="text-xl font-bold">{String(post.title ?? "")}</h2>
                 <p className="text-sm text-muted-foreground mt-3">{String(post.shortDescription ?? "")}</p>

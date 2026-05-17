@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Upload } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Sections";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { getMyRegistrations } from "@/lib/events";
 import { getMySubmissions, getSubmissions, saveSubmissions, type Submission } from "@/lib/studentPlatform";
@@ -18,7 +18,7 @@ export function StudentSubmissionsPage() {
 
 function SubmissionPanel({ email, submissions }: { email: string; submissions: Submission[] }) {
   const registrations = getMyRegistrations();
-  const [form, setForm] = useState({ eventId: registrations[0]?.eventId ?? "", roundId: "", registrationId: registrations[0]?.id ?? "", projectTitle: "", projectDescription: "", githubLink: "", demoVideoLink: "", pptLink: "", liveProjectLink: "", notes: "" });
+  const [form, setForm] = useState({ eventId: registrations[0]?.eventId ?? "", roundId: "", registrationId: registrations[0]?.id ?? "", projectTitle: "", projectDescription: "", githubLink: "", demoVideoLink: "", pptLink: "", liveProjectLink: "", projectFile: "", pptFile: "", supportingDocument: "", notes: "" });
   const [message, setMessage] = useState("");
   const submit = () => {
     if (!form.eventId || !form.projectTitle) {
@@ -41,14 +41,16 @@ function SubmissionPanel({ email, submissions }: { email: string; submissions: S
               <div className="grid gap-4">
                 <label><span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">Event</span><select value={form.eventId} onChange={(event) => setForm((current) => ({ ...current, eventId: event.target.value, registrationId: registrations.find((item) => item.eventId === event.target.value)?.id ?? "" }))} className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm">{registrations.map((item) => <option key={item.id} value={item.eventId}>{item.eventSlug}</option>)}</select></label>
                 {["roundId", "projectTitle", "projectDescription", "githubLink", "demoVideoLink", "pptLink", "liveProjectLink", "notes"].map((key) => <Field key={key} label={key} value={String(form[key as keyof typeof form] ?? "")} onChange={(value) => setForm((current) => ({ ...current, [key]: value }))} />)}
-                <div className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground"><Upload className="h-4 w-4 inline mr-2" />File upload placeholder for future storage integration.</div>
+                <FileUploadField label="Project Submission File" value={form.projectFile} onChange={(value) => setForm((current) => ({ ...current, projectFile: value }))} accept=".pdf,.doc,.docx,.zip,application/pdf,application/zip,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Upload placeholder for project files. Links remain available below." />
+                <FileUploadField label="PPT Upload" value={form.pptFile} onChange={(value) => setForm((current) => ({ ...current, pptFile: value }))} accept=".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" helper="Accepted: PDF, PPT, PPTX." />
+                <FileUploadField label="Supporting Document Upload" value={form.supportingDocument} onChange={(value) => setForm((current) => ({ ...current, supportingDocument: value }))} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX." />
                 {message ? <p className="text-sm text-primary">{message}</p> : null}
                 <button onClick={submit} className="rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Submit Project</button>
               </div>
             </section>
             <section className="glass-strong rounded-2xl p-6 racing-border">
               <h2 className="text-2xl font-bold mb-4">My Submissions</h2>
-              {submissions.length === 0 ? <p className="text-sm text-muted-foreground">No submissions yet.</p> : submissions.map((item) => <div key={item.id} className="rounded-xl border border-border p-4 mb-3"><h3 className="font-bold">{item.projectTitle}</h3><p className="text-sm text-muted-foreground mt-1">{item.status}</p>{item.adminNote ? <p className="text-sm text-primary mt-2">{item.adminNote}</p> : null}</div>)}
+              {submissions.length === 0 ? <p className="text-sm text-muted-foreground">No submissions yet.</p> : submissions.map((item) => <div key={item.id} className="rounded-xl border border-border p-4 mb-3"><h3 className="font-bold">{item.projectTitle}</h3><p className="text-sm text-muted-foreground mt-1">{item.status}</p>{item.projectFile ? <a href={item.projectFile} target="_blank" rel="noreferrer" className="text-sm text-primary mt-2 inline-block">Project file</a> : null}{item.pptFile ? <a href={item.pptFile} target="_blank" rel="noreferrer" className="text-sm text-primary mt-2 ml-3 inline-block">PPT file</a> : null}{item.adminNote ? <p className="text-sm text-primary mt-2">{item.adminNote}</p> : null}</div>)}
             </section>
           </div>
         </div>

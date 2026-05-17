@@ -1,8 +1,11 @@
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { CmsModule } from "@/components/admin/CmsModule";
 import { logout } from "@/lib/auth";
 
 export function AdminSettingsPage() {
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
   return (
     <AdminLayout title="Admin Settings">
       {(user) => (
@@ -11,6 +14,12 @@ export function AdminSettingsPage() {
             <h2 className="text-2xl font-bold">Admin Profile</h2>
             <p className="mt-2 text-sm text-muted-foreground">{user.email}</p>
             <p className="mt-1 text-sm text-muted-foreground">Role: Super Admin</p>
+            <div className="grid md:grid-cols-3 gap-3 mt-6">
+              {["Current Password", "New Password", "Confirm New Password"].map((label) => {
+                const key = label.toLowerCase().replaceAll(" ", "-");
+                return <PasswordField key={key} label={label} visible={Boolean(showPasswords[key])} onToggle={() => setShowPasswords((current) => ({ ...current, [key]: !current[key] }))} />;
+              })}
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Change Password Placeholder</button>
               <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Payment Settings Placeholder</button>
@@ -33,5 +42,19 @@ export function AdminSettingsPage() {
         </div>
       )}
     </AdminLayout>
+  );
+}
+
+function PasswordField({ label, visible, onToggle }: { label: string; visible: boolean; onToggle: () => void }) {
+  return (
+    <label>
+      <span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">{label}</span>
+      <span className="relative block">
+        <input type={visible ? "text" : "password"} className="w-full bg-background/60 border border-border rounded-xl py-3 pl-4 pr-12 text-sm focus:outline-none focus:border-primary" />
+        <button type="button" onClick={onToggle} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-muted-foreground hover:text-primary" aria-label={visible ? "Hide password" : "Show password"}>
+          {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </span>
+    </label>
   );
 }

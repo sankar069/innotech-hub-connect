@@ -1,13 +1,16 @@
 import { useMemo, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
+import { FileUploadField, MultiFileUploadField, type StoredFileMeta } from "@/components/admin/FileUploadField";
 import { type CmsCollection, type CmsItem, slugify, upsertCmsItem, useCmsCollection } from "@/lib/cms";
 
 export type CmsField = {
   key: string;
   label: string;
-  type?: "text" | "number" | "textarea" | "checkbox" | "select" | "image";
+  type?: "text" | "number" | "textarea" | "checkbox" | "select" | "image" | "file" | "document" | "video" | "audio" | "gallery";
   required?: boolean;
   options?: string[];
+  helper?: string;
+  accept?: string;
 };
 
 export function CmsModule({
@@ -87,7 +90,7 @@ export function CmsModule({
           <h3 className="text-xl font-bold mb-5">Edit Item</h3>
           <div className="grid md:grid-cols-2 gap-4">
             {fields.map((field) => (
-              <FieldEditor key={field.key} field={field} value={editing[field.key]} onChange={(value) => updateEditing(field.key, value)} />
+              <FieldEditor key={field.key} field={field} value={editing[field.key]} onChange={(value) => updateEditing(field.key, value)} onMetaChange={(meta) => updateEditing(`${field.key}Meta`, meta ?? null)} />
             ))}
           </div>
           <div className="flex flex-wrap gap-3 mt-6">
@@ -127,7 +130,7 @@ export function CmsModule({
   );
 }
 
-function FieldEditor({ field, value, onChange }: { field: CmsField; value: unknown; onChange: (value: unknown) => void }) {
+function FieldEditor({ field, value, onChange, onMetaChange }: { field: CmsField; value: unknown; onChange: (value: unknown) => void; onMetaChange: (meta?: StoredFileMeta) => void }) {
   const baseClass = "w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
 
   return (
@@ -142,10 +145,20 @@ function FieldEditor({ field, value, onChange }: { field: CmsField; value: unkno
           <option value="">Select</option>
           {field.options?.map((option) => <option key={option} value={option}>{option}</option>)}
         </select>
+      ) : field.type === "image" || field.type === "file" || field.type === "document" || field.type === "video" || field.type === "audio" ? (
+        <FileUploadField
+          label={field.label}
+          value={String(value ?? "")}
+          onChange={onChange}
+          accept={field.accept ?? (field.type === "document" ? ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" : field.type === "video" ? "video/*" : field.type === "audio" ? "audio/*" : "image/jpeg,image/png,image/webp")}
+          helper={field.helper}
+          onMetaChange={onMetaChange}
+        />
+      ) : field.type === "gallery" ? (
+        <MultiFileUploadField label={field.label} values={Array.isArray(value) ? value.map(String) : []} onChange={onChange} accept={field.accept ?? "image/jpeg,image/png,image/webp"} helper={field.helper} />
       ) : (
         <>
           <input type={field.type === "number" ? "number" : "text"} value={String(value ?? "")} onChange={(event) => onChange(field.type === "number" ? Number(event.target.value) : event.target.value)} className={baseClass} />
-          {field.type === "image" && value ? <img src={String(value)} alt="" className="mt-3 h-20 w-20 rounded-xl object-cover border border-border" /> : null}
         </>
       )}
     </label>
