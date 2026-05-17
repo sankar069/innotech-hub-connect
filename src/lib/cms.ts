@@ -317,8 +317,11 @@ export function getCmsCollection<T extends CmsItem = CmsItem>(collection: CmsCol
 
   try {
     const raw = window.localStorage.getItem(cmsKey(collection));
-    return raw ? JSON.parse(raw) : (cmsSeed[collection] as T[]);
-  } catch {
+    if (!raw) return cmsSeed[collection] as T[];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((item) => item && typeof item === "object") : (cmsSeed[collection] as T[]);
+  } catch (error) {
+    console.error(`Unable to read ${collection} from localStorage`, error);
     return cmsSeed[collection] as T[];
   }
 }

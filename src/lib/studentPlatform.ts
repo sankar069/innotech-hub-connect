@@ -78,7 +78,7 @@ export function calculateProfileCompletion(profile: Partial<StudentProfile>) {
 }
 
 export function getStudentProfiles() {
-  return getCmsCollection<StudentProfile>("studentProfiles");
+  return getCmsCollection<StudentProfile>("studentProfiles") || [];
 }
 
 export function getCurrentStudentProfile() {
@@ -105,7 +105,7 @@ export function saveStudentProfile(profile: StudentProfile) {
 }
 
 export function getCertificates() {
-  return getCmsCollection<Certificate>("certificates");
+  return getCmsCollection<Certificate>("certificates") || [];
 }
 
 export function saveCertificates(items: Certificate[]) {
@@ -140,7 +140,7 @@ export function issueCertificate(registration: EventRegistration, type = "Partic
 }
 
 export function getNotifications() {
-  return getCmsCollection<NotificationItem>("notifications").sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return (getCmsCollection<NotificationItem>("notifications") || []).sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
 }
 
 export function saveNotifications(items: NotificationItem[]) {
@@ -159,7 +159,7 @@ export function createNotification(input: Omit<NotificationItem, "id" | "created
 }
 
 export function getSubmissions() {
-  return getCmsCollection<Submission>("submissions").sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return (getCmsCollection<Submission>("submissions") || []).sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
 }
 
 export function saveSubmissions(items: Submission[]) {

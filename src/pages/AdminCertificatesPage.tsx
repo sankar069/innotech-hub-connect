@@ -5,10 +5,15 @@ import { getCertificates, issueCertificate, saveCertificates, type Certificate }
 import { useCmsCollection } from "@/lib/cms";
 
 export function AdminCertificatesPage() {
-  const { items } = useCmsCollection<Certificate>("certificates");
-  const registrations = getRegistrations().filter((item) => item.registrationStatus === "Approved");
+  const { items: storedItems } = useCmsCollection<Certificate>("certificates");
+  const items = Array.isArray(storedItems) ? storedItems : [];
+  const registrations = getRegistrations().filter((item) => {
+    const registrationStatus = String(item.registrationStatus ?? "").toLowerCase();
+    const paymentStatus = String(item.paymentStatus ?? "").toLowerCase();
+    return registrationStatus === "approved" && (paymentStatus === "approved" || paymentStatus === "not required");
+  });
   const [query, setQuery] = useState("");
-  const filtered = useMemo(() => items.filter((item) => `${item.studentName} ${item.eventTitle} ${item.certificateId}`.toLowerCase().includes(query.toLowerCase())), [items, query]);
+  const filtered = useMemo(() => items.filter((item) => `${item.studentName ?? ""} ${item.eventTitle ?? ""} ${item.certificateId ?? ""}`.toLowerCase().includes(query.toLowerCase())), [items, query]);
   return (
     <AdminLayout title="Certificates">
       {() => (

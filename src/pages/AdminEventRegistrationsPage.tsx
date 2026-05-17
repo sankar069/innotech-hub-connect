@@ -7,7 +7,8 @@ import { useCmsCollection } from "@/lib/cms";
 
 export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
   const event = getEventById(eventId);
-  const { items } = useCmsCollection<EventRegistration>("eventRegistrations");
+  const { items: storedItems } = useCmsCollection<EventRegistration>("eventRegistrations");
+  const items = Array.isArray(storedItems) ? storedItems : [];
   const [query, setQuery] = useState("");
   const [registrationStatus, setRegistrationStatus] = useState("");
   const [paymentStatus, setPaymentStatus] = useState("");
@@ -15,13 +16,14 @@ export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
   const [mode, setMode] = useState("");
 
   const registrations = useMemo(() => items.filter((registration) => {
-    const haystack = `${registration.studentName} ${registration.studentEmail} ${registration.studentDetails.phone ?? ""}`.toLowerCase();
+    const studentDetails = registration.studentDetails ?? {};
+    const haystack = `${registration.studentName ?? ""} ${registration.studentEmail ?? ""} ${studentDetails.phone ?? ""}`.toLowerCase();
     const registrationMode = String(registration.teamDetails?.registrationType ?? "Individual");
     return registration.eventId === eventId
       && (!query || haystack.includes(query.toLowerCase()))
       && (!registrationStatus || registration.registrationStatus === registrationStatus)
       && (!paymentStatus || registration.paymentStatus === paymentStatus)
-      && (!college || String(registration.studentDetails.college ?? "").toLowerCase().includes(college.toLowerCase()))
+      && (!college || String(studentDetails.college ?? "").toLowerCase().includes(college.toLowerCase()))
       && (!mode || registrationMode === mode);
   }), [college, eventId, items, mode, paymentStatus, query, registrationStatus]);
 
@@ -57,9 +59,12 @@ export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
                 <h2 className="text-2xl font-bold mt-2">{event?.title ?? "Event not found"}</h2>
                 <p className="text-sm text-muted-foreground mt-1">{registrations.length} registration(s) found</p>
               </div>
-              <button onClick={exportCsv} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-primary text-primary-foreground font-semibold">
-                <Download className="h-4 w-4" /> Export CSV
-              </button>
+              <div className="flex flex-wrap gap-3">
+                {!event ? <a href="/admin/events" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold">Back to Events</a> : null}
+                <button onClick={exportCsv} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-primary text-primary-foreground font-semibold">
+                  <Download className="h-4 w-4" /> Export CSV
+                </button>
+              </div>
             </div>
           </div>
 
@@ -73,16 +78,16 @@ export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
 
           <div className="grid gap-4">
             {registrations.length === 0 ? (
-              <div className="glass-strong rounded-2xl p-6 text-muted-foreground">No registrations added yet.</div>
+              <div className="glass-strong rounded-2xl p-6 text-muted-foreground">No registrations found for this event yet.</div>
             ) : registrations.map((registration) => (
               <div key={registration.id} className="glass-strong rounded-2xl p-5 racing-border">
                 <div className="grid lg:grid-cols-[1.4fr_1fr_auto] gap-5">
                   <div>
-                    <h3 className="text-xl font-bold">{registration.studentName}</h3>
-                    <p className="text-sm text-muted-foreground">{registration.studentEmail} · {registration.studentDetails.phone}</p>
-                    <p className="text-sm text-muted-foreground mt-2">{registration.studentDetails.college} · {registration.studentDetails.department} · {registration.studentDetails.year}</p>
+                    <h3 className="text-xl font-bold">{registration.studentName ?? "N/A"}</h3>
+                    <p className="text-sm text-muted-foreground">{registration.studentEmail ?? "N/A"} - {registration.studentDetails?.phone ?? "N/A"}</p>
+                    <p className="text-sm text-muted-foreground mt-2">{registration.studentDetails?.college ?? "N/A"} - {registration.studentDetails?.department ?? "N/A"} - {registration.studentDetails?.year ?? "N/A"}</p>
                     {registration.teamDetails?.teamName ? <p className="text-sm text-primary mt-2">Team: {String(registration.teamDetails.teamName)}</p> : null}
-                    <p className="text-xs text-muted-foreground mt-3">Submitted {new Date(registration.createdAt).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground mt-3">Submitted {registration.createdAt ? new Date(registration.createdAt).toLocaleString() : "Date not set"}</p>
                   </div>
                   <div className="space-y-2">
                     <Badge label={`Registration: ${registration.registrationStatus}`} />

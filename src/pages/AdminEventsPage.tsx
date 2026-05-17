@@ -36,8 +36,10 @@ const blankEvent = (): EventItem => ({
 });
 
 export function AdminEventsPage() {
-  const { items: events } = useCmsCollection<EventItem>("events");
-  const { items: registrations } = useCmsCollection("eventRegistrations");
+  const { items: storedEvents } = useCmsCollection<EventItem>("events");
+  const events = Array.isArray(storedEvents) ? storedEvents : [];
+  const { items: storedRegistrations } = useCmsCollection("eventRegistrations");
+  const registrations = Array.isArray(storedRegistrations) ? storedRegistrations : [];
   const [editing, setEditing] = useState<EventItem | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
@@ -47,8 +49,8 @@ export function AdminEventsPage() {
   const [message, setMessage] = useState("");
 
   const filtered = useMemo(() => events.filter((event) => {
-    const matchesQuery = !query || event.title.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (!category || event.category === category) && (!status || event.status === status) && (!type || event.type === type) && (!paymentType || event.payment?.type === paymentType);
+    const matchesQuery = !query || String(event?.title ?? "").toLowerCase().includes(query.toLowerCase());
+    return matchesQuery && (!category || event?.category === category) && (!status || event?.status === status) && (!type || event?.type === type) && (!paymentType || event?.payment?.type === paymentType);
   }), [events, query, category, status, type, paymentType]);
 
   const save = () => {
@@ -177,12 +179,14 @@ export function AdminEventsPage() {
           )}
 
           <div className="grid gap-4">
-            {filtered.map((event) => (
+            {filtered.length === 0 ? (
+              <div className="glass-strong rounded-2xl p-6 racing-border text-muted-foreground">No events found. Create your first event.</div>
+            ) : filtered.map((event) => (
               <div key={event.id} className="glass-strong rounded-2xl p-5 racing-border">
                 <div className="flex flex-wrap justify-between gap-4">
                   <div>
-                    <h3 className="font-bold">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground">{event.category} · {event.type} · {event.status} · {String(event.payment?.type ?? "Free Event")}</p>
+                    <h3 className="font-bold">{event?.title ?? "N/A"}</h3>
+                    <p className="text-sm text-muted-foreground">{event?.category ?? "N/A"} - {event?.type ?? "N/A"} - {event?.status ?? "N/A"} - {String(event?.payment?.type ?? "Free Event")}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <a href={`/admin/events/${event.id}/registrations`} className="rounded-lg border border-border px-3 py-2 text-sm">Registrations</a>

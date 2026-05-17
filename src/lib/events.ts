@@ -78,7 +78,7 @@ export type PaymentProof = CmsItem & {
 };
 
 export function getEvents() {
-  return getCmsCollection<EventItem>("events").sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
+  return (getCmsCollection<EventItem>("events") || []).sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0));
 }
 
 export function getPublicEvents() {
@@ -98,7 +98,7 @@ export function saveEvents(events: EventItem[]) {
 }
 
 export function getRegistrations() {
-  return getCmsCollection<EventRegistration>("eventRegistrations").sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return (getCmsCollection<EventRegistration>("eventRegistrations") || []).sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
 }
 
 export function saveRegistrations(registrations: EventRegistration[]) {
@@ -106,7 +106,7 @@ export function saveRegistrations(registrations: EventRegistration[]) {
 }
 
 export function getPaymentProofs() {
-  return getCmsCollection<PaymentProof>("paymentProofs").sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return (getCmsCollection<PaymentProof>("paymentProofs") || []).sort((a, b) => String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")));
 }
 
 export function savePaymentProofs(proofs: PaymentProof[]) {

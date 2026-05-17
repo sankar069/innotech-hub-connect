@@ -6,11 +6,12 @@ import { getCertificates, getStudentProfiles, type StudentProfile } from "@/lib/
 import { useCmsCollection } from "@/lib/cms";
 
 export function AdminStudentsPage() {
-  const { items } = useCmsCollection<StudentProfile>("studentProfiles");
+  const { items: storedItems } = useCmsCollection<StudentProfile>("studentProfiles");
+  const items = Array.isArray(storedItems) ? storedItems : [];
   const [query, setQuery] = useState("");
   const registrations = getRegistrations();
   const certificates = getCertificates();
-  const students = useMemo(() => items.filter((student) => `${student.name} ${student.email} ${student.college ?? ""}`.toLowerCase().includes(query.toLowerCase())), [items, query]);
+  const students = useMemo(() => items.filter((student) => `${student.name ?? ""} ${student.email ?? ""} ${student.college ?? ""}`.toLowerCase().includes(query.toLowerCase())), [items, query]);
   return (
     <AdminLayout title="Students">
       {() => (
@@ -44,15 +45,16 @@ export function AdminStudentsPage() {
 }
 
 export function AdminStudentDetailPage({ studentId }: { studentId: string }) {
-  const email = decodeURIComponent(studentId);
-  const student = getStudentProfiles().find((item) => item.email === email);
-  const registrations = getRegistrations().filter((item) => item.studentEmail === email);
-  const certificates = getCertificates().filter((item) => item.studentId === email);
+  const decodedStudentId = decodeURIComponent(studentId);
+  const student = getStudentProfiles().find((item) => item.id === decodedStudentId || item.email === decodedStudentId);
+  const lookupId = student?.email ?? decodedStudentId;
+  const registrations = getRegistrations().filter((item) => item.studentEmail === lookupId);
+  const certificates = getCertificates().filter((item) => item.studentId === lookupId);
   return (
     <AdminLayout title="Student Detail">
       {() => (
         <div className="space-y-6">
-          {!student ? <div className="glass-strong rounded-2xl p-6 racing-border">Student not found.</div> : (
+          {!student ? <div className="glass-strong rounded-2xl p-6 racing-border"><h2 className="text-2xl font-bold">Student not found</h2><a href="/admin/students" className="inline-flex mt-4 rounded-xl border border-border px-4 py-2 text-sm font-semibold">Back to Students</a></div> : (
             <>
               <section className="glass-strong rounded-2xl p-6 racing-border"><h2 className="text-2xl font-bold">{student.name}</h2><p className="text-sm text-muted-foreground mt-2">{student.email} · {student.college}</p><p className="text-sm text-muted-foreground mt-2">{student.bio}</p></section>
               <section className="glass-strong rounded-2xl p-6 racing-border"><h3 className="text-xl font-bold mb-4">Registered Events</h3>{registrations.map((item) => <div key={item.id} className="rounded-xl border border-border p-3 mb-2 text-sm">{item.eventSlug} · {item.registrationStatus} · {item.paymentStatus}</div>)}</section>
