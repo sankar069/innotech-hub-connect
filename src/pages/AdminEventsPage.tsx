@@ -5,9 +5,10 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { FileUploadField } from "@/components/admin/FileUploadField";
 import { eventCategories, eventStatuses, eventTypes, getEvents, participationModes, paymentTypes, registrationsToCsv, saveEvents, type EventItem } from "@/lib/events";
 import { slugify, useCmsCollection } from "@/lib/cms";
+import { createId } from "@/lib/id";
 
 const blankEvent = (): EventItem => ({
-  id: crypto.randomUUID(),
+  id: createId("event"),
   title: "",
   slug: "",
   category: "",

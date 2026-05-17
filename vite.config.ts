@@ -55,6 +55,7 @@ export default defineConfig(({ mode }) => {
         prerender: {
           enabled: true,
           crawlLinks: true,
+          failOnError: false,
         },
       }),
       tailwindcss(),

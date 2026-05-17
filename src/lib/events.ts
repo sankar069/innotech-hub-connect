@@ -1,5 +1,6 @@
 import { getAuthUser } from "@/lib/auth";
 import { getCmsCollection, saveCmsCollection, sortActive, type CmsItem } from "@/lib/cms";
+import { createId } from "@/lib/id";
 
 export const eventCategories = [
   "Hackathons",
@@ -90,7 +91,8 @@ export function getEventBySlug(slug: string) {
 }
 
 export function getEventById(id: string) {
-  return getEvents().find((event) => event.id === id);
+  const decodedId = decodeURIComponent(id);
+  return getEvents().find((event) => event.id === decodedId || event.slug === decodedId);
 }
 
 export function saveEvents(events: EventItem[]) {
@@ -137,7 +139,7 @@ export function submitRegistration(event: EventItem, payload: Omit<EventRegistra
   const now = new Date().toISOString();
   const registration: EventRegistration = {
     ...payload,
-    id: crypto.randomUUID(),
+    id: createId("registration"),
     eventId: event.id,
     eventSlug: event.slug,
     registrationStatus: isPaid ? "Pending Review" : "Approved",
@@ -153,7 +155,7 @@ export function submitRegistration(event: EventItem, payload: Omit<EventRegistra
   if (isPaid) {
     saveCmsCollection("paymentProofs", [
       {
-        id: crypto.randomUUID(),
+        id: createId("payment-proof"),
         registrationId: registration.id,
         eventId: event.id,
         studentId: registration.studentEmail,

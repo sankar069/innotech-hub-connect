@@ -86,7 +86,9 @@ export function AdminLayout({
                       </a>
                     </div>
                   </div>
-                  <AdminErrorBoundary>{children(user)}</AdminErrorBoundary>
+                  <AdminErrorBoundary>
+                    <AdminSafeContent render={() => children(user)} />
+                  </AdminErrorBoundary>
                 </section>
               </div>
             </div>
@@ -96,6 +98,10 @@ export function AdminLayout({
       )}
     </ProtectedRoute>
   );
+}
+
+function AdminSafeContent({ render }: { render: () => React.ReactNode }) {
+  return <>{render()}</>;
 }
 
 class AdminErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {

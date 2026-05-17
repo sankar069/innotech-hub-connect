@@ -6,6 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { getMyRegistrations } from "@/lib/events";
 import { getMySubmissions, getSubmissions, saveSubmissions, type Submission } from "@/lib/studentPlatform";
 import { useCmsCollection } from "@/lib/cms";
+import { createId } from "@/lib/id";
 
 export function StudentSubmissionsPage() {
   const { items } = useCmsCollection<Submission>("submissions");
@@ -25,7 +26,7 @@ function SubmissionPanel({ email, submissions }: { email: string; submissions: S
       setMessage("Please select an event and add a project title.");
       return;
     }
-    const item: Submission = { ...form, id: crypto.randomUUID(), studentId: email, status: "Submitted", createdAt: new Date().toISOString(), active: true, order: Date.now() };
+    const item: Submission = { ...form, id: createId("submission"), studentId: email, status: "Submitted", createdAt: new Date().toISOString(), active: true, order: Date.now() };
     saveSubmissions([item, ...getSubmissions()]);
     setMessage("Submission saved.");
   };

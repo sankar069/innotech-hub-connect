@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { FileUploadField, MultiFileUploadField, type StoredFileMeta } from "@/components/admin/FileUploadField";
 import { type CmsCollection, type CmsItem, slugify, upsertCmsItem, useCmsCollection } from "@/lib/cms";
+import { createId } from "@/lib/id";
 
 export type CmsField = {
   key: string;
@@ -31,7 +32,7 @@ export function CmsModule({
 
   const startNew = () => {
     setEditing({
-      id: crypto.randomUUID(),
+      id: createId("cms"),
       active: true,
       order: sortedItems.length + 1,
     });

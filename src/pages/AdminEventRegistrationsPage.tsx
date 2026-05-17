@@ -6,7 +6,8 @@ import { getEventById, getRegistrations, registrationsToCsv, saveRegistrations, 
 import { useCmsCollection } from "@/lib/cms";
 
 export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
-  const event = getEventById(eventId);
+  const decodedEventId = decodeURIComponent(eventId);
+  const event = getEventById(decodedEventId);
   const { items: storedItems } = useCmsCollection<EventRegistration>("eventRegistrations");
   const items = Array.isArray(storedItems) ? storedItems : [];
   const [query, setQuery] = useState("");
@@ -19,13 +20,13 @@ export function AdminEventRegistrationsPage({ eventId }: { eventId: string }) {
     const studentDetails = registration.studentDetails ?? {};
     const haystack = `${registration.studentName ?? ""} ${registration.studentEmail ?? ""} ${studentDetails.phone ?? ""}`.toLowerCase();
     const registrationMode = String(registration.teamDetails?.registrationType ?? "Individual");
-    return registration.eventId === eventId
+    return (registration.eventId === decodedEventId || registration.eventId === event?.id || registration.eventSlug === event?.slug)
       && (!query || haystack.includes(query.toLowerCase()))
       && (!registrationStatus || registration.registrationStatus === registrationStatus)
       && (!paymentStatus || registration.paymentStatus === paymentStatus)
       && (!college || String(studentDetails.college ?? "").toLowerCase().includes(college.toLowerCase()))
       && (!mode || registrationMode === mode);
-  }), [college, eventId, items, mode, paymentStatus, query, registrationStatus]);
+  }), [college, decodedEventId, event?.id, event?.slug, items, mode, paymentStatus, query, registrationStatus]);
 
   const setStatus = (registration: EventRegistration, status: string) => {
     const patch: Partial<EventRegistration> = { registrationStatus: status };

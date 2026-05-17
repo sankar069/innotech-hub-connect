@@ -10,6 +10,7 @@ import {
 import { SectionHeading } from "./SectionHeading";
 import { Counter } from "./Counter";
 import { getCmsCollection, saveCmsCollection, useCmsCollection } from "@/lib/cms";
+import { createId } from "@/lib/id";
 
 /* ======================= ABOUT ======================= */
 const aboutCards = [
@@ -805,7 +806,7 @@ export function Contact() {
       saveCmsCollection("contactLeads", [
         ...getCmsCollection("contactLeads"),
         {
-          id: crypto.randomUUID(),
+          id: createId("contact-lead"),
           ...form,
           status: "New",
           adminNotes: "",

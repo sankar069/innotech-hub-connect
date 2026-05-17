@@ -10,7 +10,9 @@ export function AdminCertificatesPage() {
   const registrations = getRegistrations().filter((item) => {
     const registrationStatus = String(item.registrationStatus ?? "").toLowerCase();
     const paymentStatus = String(item.paymentStatus ?? "").toLowerCase();
-    return registrationStatus === "approved" && (paymentStatus === "approved" || paymentStatus === "not required");
+    const registrationReady = registrationStatus === "approved" || registrationStatus === "registered";
+    const paymentReady = !paymentStatus || paymentStatus === "approved" || paymentStatus === "not required" || paymentStatus === "not_required";
+    return registrationReady && paymentReady;
   });
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => items.filter((item) => `${item.studentName ?? ""} ${item.eventTitle ?? ""} ${item.certificateId ?? ""}`.toLowerCase().includes(query.toLowerCase())), [items, query]);

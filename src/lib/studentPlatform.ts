@@ -1,6 +1,7 @@
 import { getAuthUser } from "@/lib/auth";
 import { getCmsCollection, saveCmsCollection, type CmsItem } from "@/lib/cms";
 import { getEvents, getRegistrations, type EventRegistration } from "@/lib/events";
+import { createId } from "@/lib/id";
 
 export type StudentProfile = CmsItem & {
   userId: string;
@@ -121,7 +122,7 @@ export function issueCertificate(registration: EventRegistration, type = "Partic
   const event = getEvents().find((item) => item.id === registration.eventId);
   const certificateId = `ITH-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   const certificate: Certificate = {
-    id: crypto.randomUUID(),
+    id: createId("certificate"),
     certificateId,
     eventId: registration.eventId,
     studentId: registration.studentEmail,
@@ -153,7 +154,7 @@ export function getMyNotifications(email = getAuthUser()?.email) {
 }
 
 export function createNotification(input: Omit<NotificationItem, "id" | "createdAt" | "read" | "active" | "order">) {
-  const item: NotificationItem = { ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString(), read: false, active: true, order: Date.now() };
+  const item: NotificationItem = { ...input, id: createId("notification"), createdAt: new Date().toISOString(), read: false, active: true, order: Date.now() };
   saveNotifications([item, ...getNotifications()]);
   return item;
 }
