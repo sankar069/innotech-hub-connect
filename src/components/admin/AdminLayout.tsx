@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Component, useState } from "react";
 import type React from "react";
 import { Menu, X } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
@@ -86,7 +86,7 @@ export function AdminLayout({
                       </a>
                     </div>
                   </div>
-                  {children(user)}
+                  <AdminErrorBoundary>{children(user)}</AdminErrorBoundary>
                 </section>
               </div>
             </div>
@@ -96,4 +96,39 @@ export function AdminLayout({
       )}
     </ProtectedRoute>
   );
+}
+
+class AdminErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error("Admin page failed to render", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="glass-strong rounded-2xl p-6 racing-border">
+          <h2 className="text-2xl font-bold">Admin page could not load</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Some saved dashboard data may be outdated or malformed. Refresh the page or clear this page's local mock data if it keeps happening.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button type="button" onClick={() => this.setState({ hasError: false })} className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+              Try again
+            </button>
+            <a href="/admin/dashboard" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold">
+              Admin Dashboard
+            </a>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
 }
