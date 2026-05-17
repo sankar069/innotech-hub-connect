@@ -325,8 +325,13 @@ export function getCmsCollection<T extends CmsItem = CmsItem>(collection: CmsCol
 
 export function saveCmsCollection<T extends CmsItem>(collection: CmsCollection, items: T[]) {
   if (!canUseStorage()) return;
-  window.localStorage.setItem(cmsKey(collection), JSON.stringify(items));
-  window.dispatchEvent(new CustomEvent(cmsEventName, { detail: { collection } }));
+  try {
+    window.localStorage.setItem(cmsKey(collection), JSON.stringify(items));
+    window.dispatchEvent(new CustomEvent(cmsEventName, { detail: { collection } }));
+  } catch (error) {
+    console.error(`Unable to save ${collection} to localStorage`, error);
+    window.dispatchEvent(new CustomEvent(cmsEventName, { detail: { collection, error } }));
+  }
 }
 
 export function useCmsCollection<T extends CmsItem = CmsItem>(collection: CmsCollection) {

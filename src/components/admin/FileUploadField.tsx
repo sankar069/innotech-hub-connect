@@ -24,6 +24,13 @@ function fileToDataUrl(file: File) {
   });
 }
 
+async function fileToPreviewUrl(file: File) {
+  if (typeof URL !== "undefined" && typeof URL.createObjectURL === "function") {
+    return URL.createObjectURL(file);
+  }
+  return fileToDataUrl(file);
+}
+
 function formatSize(size: number) {
   if (!size) return "";
   if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
@@ -77,7 +84,7 @@ export function FileUploadField({
     // TODO: Upload this file to Cloudinary/Vercel Blob/S3 and store the URL in MongoDB.
     // TODO: Store returned fileName, fileType, fileSize, fileUrl, and uploadedAt in the MongoDB document.
     // TODO: Replace the local preview data URL with the permanent storage URL.
-    const fileUrl = await fileToDataUrl(file);
+    const fileUrl = await fileToPreviewUrl(file);
     onChange(fileUrl);
     onMetaChange?.({ fileName: file.name, fileType: file.type, fileSize: file.size, fileUrl, uploadedAt: new Date().toISOString() });
     event.target.value = "";
@@ -150,7 +157,7 @@ export function MultiFileUploadField({
       return;
     }
     // TODO: Upload these files to Cloudinary/Vercel Blob/S3 and store the returned URLs in MongoDB.
-    const next = await Promise.all(files.map(fileToDataUrl));
+    const next = await Promise.all(files.map(fileToPreviewUrl));
     onChange([...values, ...next]);
     event.target.value = "";
   };
