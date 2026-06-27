@@ -135,6 +135,14 @@ export function getRegistrationStatus(event: EventItem) {
 }
 
 export function submitRegistration(event: EventItem, payload: Omit<EventRegistration, "id" | "eventId" | "eventSlug" | "registrationStatus" | "paymentStatus" | "createdAt" | "updatedAt">) {
+  // Prevent duplicate registrations
+  const existingRegistration = getRegistrations().find(
+    (reg) => reg.eventId === event.id && reg.studentEmail === payload.studentEmail
+  );
+  if (existingRegistration) {
+    throw new Error("You have already registered for this event. Please check your dashboard.");
+  }
+
   const isPaid = event.payment?.type === "Paid Event";
   const now = new Date().toISOString();
   const registration: EventRegistration = {

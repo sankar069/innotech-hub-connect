@@ -9,23 +9,27 @@ export type StudentProfile = CmsItem & {
   email: string;
   phone?: string;
   college?: string;
+  degree?: string;
+  graduationYear?: string;
   rollNumber?: string;
   department?: string;
   year?: string;
   city?: string;
   state?: string;
   profilePhoto?: string;
-  skills?: string;
+  skills?: string[];
   interests?: string;
-  linkedIn?: string;
-  github?: string;
-  portfolio?: string;
+  links?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    portfolio?: string;
+  };
   resumeUrl?: string;
   bio?: string;
-  hackathons?: string;
-  projects?: string;
-  workshops?: string;
-  preferredCategories?: string;
+  projectsSummary?: string;
+  achievementsSummary?: string;
+  teamRolePreferences?: string;
   profileCompletion?: number;
   updatedAt?: string;
 };
@@ -73,8 +77,19 @@ export type Submission = CmsItem & {
 };
 
 export function calculateProfileCompletion(profile: Partial<StudentProfile>) {
-  const fields = ["name", "email", "phone", "college", "rollNumber", "department", "year", "city", "state", "skills", "interests", "linkedIn", "github", "portfolio", "resumeUrl", "bio", "preferredCategories"];
-  const filled = fields.filter((field) => Boolean(String(profile[field as keyof StudentProfile] ?? "").trim())).length;
+  const fields = [
+    "name", "email", "phone", "college", "degree", "graduationYear",
+    "skills", "links", "resumeUrl", "bio", "projectsSummary",
+    "achievementsSummary", "teamRolePreferences"
+  ];
+  const filled = fields.filter((field) => {
+    const val = profile[field as keyof StudentProfile];
+    if (field === "links" && val) {
+      return Object.values(val).some(v => v && String(v).trim() !== "");
+    }
+    if (Array.isArray(val)) return val.length > 0;
+    return val !== undefined && val !== null && String(val).trim() !== "";
+  }).length;
   return Math.round((filled / fields.length) * 100);
 }
 
@@ -154,7 +169,14 @@ export function getMyNotifications(email = getAuthUser()?.email) {
 }
 
 export function createNotification(input: Omit<NotificationItem, "id" | "createdAt" | "read" | "active" | "order">) {
-  const item: NotificationItem = { ...input, id: createId("notification"), createdAt: new Date().toISOString(), read: false, active: true, order: Date.now() };
+  const item: NotificationItem = {
+    ...input,
+    id: createId("notification"),
+    createdAt: new Date().toISOString(),
+    read: false,
+    active: true,
+    order: Date.now(),
+  } as NotificationItem;
   saveNotifications([item, ...getNotifications()]);
   return item;
 }

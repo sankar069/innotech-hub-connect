@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { FileText, Upload, X } from "lucide-react";
 
 const defaultMaxSizeMb = 8;
@@ -61,6 +61,7 @@ export function FileUploadField({
   onMetaChange?: (meta?: StoredFileMeta) => void;
 }) {
   const [error, setError] = React.useState("");
+  const [uploading, setUploading] = React.useState(false);
   const inputId = React.useId();
   const fileName = meta?.fileName || (value && !value.startsWith("data:") ? value.split("/").pop() : "");
 
@@ -74,20 +75,59 @@ export function FileUploadField({
       return;
     }
     const accepted = accept.split(",").map((item) => item.trim()).filter(Boolean);
-    const typeOk = accepted.some((item) => item.endsWith("/*") ? file.type.startsWith(item.replace("/*", "/")) : file.type === item || file.name.toLowerCase().endsWith(item.replace(".", "").toLowerCase()));
+    const typeOk = accepted.some((item) => {
+      if (item.endsWith("/*")) return file.type.startsWith(item.replace("/*", "/"));
+      if (item.startsWith(".")) return file.name.toLowerCase().endsWith(item.toLowerCase());
+      return file.type === item;
+    });
+
     if (accepted.length && !typeOk) {
-      setError("Please choose an accepted file type.");
+      setError(`Please choose an accepted file type (${accept}).`);
       event.target.value = "";
       return;
     }
 
-    // TODO: Upload this file to Cloudinary/Vercel Blob/S3 and store the URL in MongoDB.
-    // TODO: Store returned fileName, fileType, fileSize, fileUrl, and uploadedAt in the MongoDB document.
-    // TODO: Replace the local preview data URL with the permanent storage URL.
-    const fileUrl = await fileToPreviewUrl(file);
-    onChange(fileUrl);
-    onMetaChange?.({ fileName: file.name, fileType: file.type, fileSize: file.size, fileUrl, uploadedAt: new Date().toISOString() });
-    event.target.value = "";
+    setUploading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "x-filename": file.name,
+          "content-type": file.type,
+        },
+        body: file,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || result.error || "Upload failed");
+      }
+
+      if (!result.success && result.message) {
+        throw new Error(result.message);
+      }
+
+      const fileUrl = result.url;
+      
+      onChange(fileUrl);
+      onMetaChange?.({ 
+        fileName: file.name, 
+        fileType: file.type, 
+        fileSize: file.size, 
+        fileUrl, 
+        uploadedAt: new Date().toISOString() 
+      });
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to upload file";
+      setError(errorMessage);
+      console.error(err);
+    } finally {
+      setUploading(false);
+      event.target.value = "";
+    }
   };
 
   const remove = () => {
@@ -113,9 +153,9 @@ export function FileUploadField({
           </div>
         ) : null}
         <div className="flex flex-wrap items-center gap-3">
-          <input id={inputId} type="file" accept={accept} onChange={chooseFile} className="sr-only" />
-          <label htmlFor={inputId} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold cursor-pointer">
-            <Upload className="h-4 w-4" /> Choose File
+          <input id={inputId} type="file" accept={accept} onChange={chooseFile} className="sr-only" disabled={uploading} />
+          <label htmlFor={inputId} className={`inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-semibold cursor-pointer ${uploading ? "opacity-50 cursor-wait" : ""}`}>
+            <Upload className={`h-4 w-4 ${uploading ? "animate-bounce" : ""}`} /> {uploading ? "Uploading..." : "Choose File"}
           </label>
           {value ? <button type="button" onClick={remove} className="inline-flex items-center gap-2 rounded-xl border border-destructive/30 px-4 py-2.5 text-sm font-semibold text-destructive"><X className="h-4 w-4" /> Remove</button> : null}
           {fileName ? <span className="text-sm text-muted-foreground min-w-0 truncate">{fileName}{meta?.fileSize ? ` - ${formatSize(meta.fileSize)}` : ""}</span> : null}
@@ -144,6 +184,7 @@ export function MultiFileUploadField({
   maxSizeMb?: number;
 }) {
   const [error, setError] = React.useState("");
+  const [uploading, setUploading] = React.useState(false);
   const inputId = React.useId();
 
   const chooseFiles = async (event: React.ChangeEvent<HTMLInputElement>) => {

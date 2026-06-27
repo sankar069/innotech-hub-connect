@@ -6,6 +6,7 @@ import { Footer } from "@/components/site/Sections";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { logout } from "@/lib/auth";
 import { getCurrentStudentProfile, saveStudentProfile, type StudentProfile } from "@/lib/studentPlatform";
+import { getTheme, setTheme, type Theme } from "@/lib/theme";
 
 export function StudentSettingsPage() {
   return (
@@ -19,12 +20,14 @@ function SettingsPanel() {
   const [profile, setProfile] = useState<StudentProfile>(() => getCurrentStudentProfile() as StudentProfile);
   const [message, setMessage] = useState("");
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
+  const [theme, setLocalTheme] = useState<Theme>(() => getTheme());
   const [prefs, setPrefs] = useState({ reminders: true, payments: true, certificates: true, announcements: true, visible: false, recommendations: true, consent: true });
 
   const updateProfile = (key: keyof StudentProfile, value: string) => setProfile((current) => ({ ...current, [key]: value }));
   const save = () => {
     saveStudentProfile(profile);
-    setMessage("Settings saved. Password and theme integrations are placeholders until backend support is connected.");
+    setTheme(theme);
+    setMessage("Settings saved successfully.");
   };
 
   return (
@@ -54,9 +57,17 @@ function SettingsPanel() {
 
             <Panel title="Theme Settings">
               <div className="grid grid-cols-3 gap-3">
-                {["Light", "Dark", "System"].map((item) => <button key={item} className={`rounded-xl border px-4 py-3 text-sm font-semibold ${item === "Dark" ? "border-primary bg-primary/10 text-primary" : "border-border"}`}>{item}</button>)}
+                {(["light", "dark", "system"] as Theme[]).map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => setLocalTheme(item)}
+                    className={`rounded-xl border px-4 py-3 text-sm font-semibold capitalize ${item === theme ? "border-primary bg-primary/10 text-primary" : "border-border"}`}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
-              <p className="text-sm text-muted-foreground mt-3">Dark remains the active default for the current premium theme.</p>
+              <p className="text-sm text-muted-foreground mt-3">Choose your interface appearance preference.</p>
             </Panel>
 
             <Panel title="Notification Preferences">
@@ -74,7 +85,7 @@ function SettingsPanel() {
 
             <Panel title="Legal Links">
               <div className="flex flex-wrap gap-3">
-                <a href="/privacy-policy" className="rounded-xl border border-border px-4 py-3 text-sm font-semibold">Privacy Policy</a>
+                <a href="/privacy" className="rounded-xl border border-border px-4 py-3 text-sm font-semibold">Privacy Policy</a>
                 <a href="/terms" className="rounded-xl border border-border px-4 py-3 text-sm font-semibold">Terms & Conditions</a>
                 <a href="/rules" className="rounded-xl border border-border px-4 py-3 text-sm font-semibold">Rules & Regulations</a>
               </div>

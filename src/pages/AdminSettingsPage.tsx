@@ -3,9 +3,19 @@ import { Eye, EyeOff } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { CmsModule } from "@/components/admin/CmsModule";
 import { logout } from "@/lib/auth";
+import { getTheme, setTheme, type Theme } from "@/lib/theme";
 
 export function AdminSettingsPage() {
   const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const [theme, setLocalTheme] = useState<Theme>(() => getTheme());
+  const [message, setMessage] = useState("");
+
+  const save = () => {
+    setTheme(theme);
+    setMessage("Settings saved.");
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   return (
     <AdminLayout title="Admin Settings">
       {(user) => (
@@ -27,6 +37,27 @@ export function AdminSettingsPage() {
               <button className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Google Auth Integration Placeholder</button>
               <button onClick={() => { logout(); window.location.href = "/"; }} className="rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Logout</button>
             </div>
+          </div>
+          <div className="glass-strong rounded-2xl p-6 racing-border">
+            <h2 className="text-2xl font-bold mb-4">Theme Settings</h2>
+            <div className="grid grid-cols-3 gap-3">
+              {(["light", "dark", "system"] as Theme[]).map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setLocalTheme(item)}
+                  className={`rounded-xl border px-4 py-3 text-sm font-semibold capitalize ${item === theme ? "border-primary bg-primary/10 text-primary" : "border-border"}`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            {message ? <div className="text-sm text-primary mt-4">{message}</div> : null}
+            <button
+              onClick={save}
+              className="mt-6 rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground"
+            >
+              Save Theme
+            </button>
           </div>
           <CmsModule
             title="Website Settings"

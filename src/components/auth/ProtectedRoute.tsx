@@ -59,8 +59,10 @@ class SectionErrorBoundary extends Component<{ children: React.ReactNode; dashbo
       return (
         <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
           <div className="glass-strong rounded-2xl p-6 racing-border max-w-md">
-            <h1 className="text-2xl font-bold">Something went wrong in this section.</h1>
-            <p className="mt-2 text-sm text-muted-foreground">The page stayed protected, but one section failed to render safely.</p>
+            <h1 className="text-2xl font-bold">
+              {this.props.dashboardPath.includes("admin") ? "Admin Panel Error" : "Student Portal Error"}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">This section failed to render safely. Your session is active, but this specific module encountered an issue.</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <button type="button" onClick={() => this.setState({ hasError: false })} className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
                 Try again

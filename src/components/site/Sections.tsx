@@ -528,13 +528,13 @@ export function BusinessAndTraction() {
           </div>
           <div className="glass-strong rounded-2xl p-6 racing-border">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />{String(firstTraction?.sectionHeading ?? "Current Traction")}</h3>
+              <h3 className="font-bold flex items-center gap-2"><Activity className="h-5 w-5 text-primary" />{String((firstTraction as any)?.sectionHeading ?? "Current Traction")}</h3>
               <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> LIVE
               </span>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {visibleTractionStats.map((s) => (
+              {(visibleTractionStats as any[]).map((s) => (
                 <div key={String(s.id ?? s.label ?? s.title)} className="bg-card/50 border border-border rounded-xl p-4">
                   <div className="text-3xl font-display font-bold text-gradient-primary">
                     {Number.isFinite(Number(s.value ?? s.v)) && Number(s.value ?? s.v) % 1 !== 0 ? <>{String(s.prefix ?? "")}{String(s.value ?? s.v)}{String(s.suffix ?? "")}</> : <Counter value={Number(s.value ?? s.v ?? 0)} prefix={String(s.prefix ?? "")} suffix={String(s.suffix ?? "")} />}
@@ -700,58 +700,172 @@ export function PartnersTeamMedia() {
             title={<>Meet the Minds Behind the <span className="text-gradient-racing">Movement</span></>}
             subtitle="A student-led, innovation-driven team building real solutions from real campus problems."
           />
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
-            {teamGroups.map((t, i) => (
-              <motion.a
-                key={String(t.id)}
-                href={`/team/${String(t.slug ?? t.id)}`}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="glass-strong rounded-2xl p-6 racing-border"
-              >
-                <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow mb-4">
-                  <Users className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <h3 className="font-bold text-lg">{String(t.name ?? t.title ?? "")}</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {String(t.shortDescription ?? "Driven contributors building, shipping, and scaling InnoTech-Hub every day.")}
-                </p>
-              </motion.a>
-            ))}
-          </div>
+          <TeamSection />
         </div>
       </section>
 
-      <section className="relative py-24 md:py-32">
+      <section id="outreach" className="relative py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <SectionHeading
             eyebrow="Outreach"
             title={<>Media & <span className="text-gradient-racing">Outreach</span></>}
             subtitle="Building presence through events, student stories, podcasts, workshops, and collaborations."
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
-            {mediaCategories.map((m, i) => (
-              <motion.a
-                key={String(m.id)}
-                href={`/media/${String(m.slug ?? m.id)}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="aspect-video glass-strong rounded-2xl racing-border flex items-center justify-center text-center p-6 hover:scale-[1.02] transition-transform group cursor-pointer"
-              >
-                <div>
-                  <Video className="h-8 w-8 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                  <div className="font-bold">{String(m.name ?? m.title ?? "")}</div>
-                </div>
-              </motion.a>
-            ))}
-          </div>
+          <MediaSection />
         </div>
       </section>
     </>
+  );
+}
+
+const teamDepartments = [
+  {
+    id: "founders",
+    title: "Founders / Core Team",
+    desc: "Spearheads the strategic vision, identifies expansion opportunities, and manages high-level partnerships and investor relations for the InnoTech-Hub ecosystem.",
+  },
+  {
+    id: "event-ops",
+    title: "Event Operations Team",
+    desc: "Oversees the end-to-end execution of hackathons and conferences, managing on-ground logistics, hospitality, and participant support systems.",
+  },
+  {
+    id: "tech-product",
+    title: "Tech / Product Team",
+    desc: "Architects and maintains the core platform, developing AI-driven student tools and institution-facing SaaS products with a focus on performance and scale.",
+  },
+  {
+    id: "design-media",
+    title: "Design & Media Team",
+    desc: "Crafts the brand's visual identity, producing high-impact graphics, promotional videos, and creative campaigns for events and outreach.",
+  },
+  {
+    id: "community",
+    title: "Community Team",
+    desc: "Drives student engagement through campus ambassador programs, managing online communities and fostering collaborative environments across regional hubs.",
+  },
+  {
+    id: "partnerships",
+    title: "Partnerships Team",
+    desc: "Nurtures relationships with industry leaders, academic institutions, and sponsors to build a sustainable network of tech-driven opportunities.",
+  },
+];
+
+function TeamSection() {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+      {teamDepartments.map((t, i) => {
+        const isExpanded = expanded === t.id;
+        return (
+          <motion.div
+            key={t.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.06 }}
+            className="glass-strong rounded-2xl p-6 racing-border cursor-pointer h-fit"
+            onClick={() => setExpanded(isExpanded ? null : t.id)}
+          >
+            <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow mb-4">
+              <Users className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <h3 className="font-bold text-lg">{t.title}</h3>
+            <p className="text-sm text-muted-foreground mt-2">{t.desc}</p>
+            
+            <motion.div
+              initial={false}
+              animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-4 mt-4 border-t border-border">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-[10px] font-mono uppercase tracking-widest text-primary mb-2">
+                  Role Highlights
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Join our {t.title.toLowerCase()} to shape the future of InnoTech-Hub. Detailed roles and application links will be available soon.
+                </p>
+              </div>
+            </motion.div>
+            
+            <div className="mt-4 flex justify-end">
+              <span className="text-xs font-mono text-primary uppercase tracking-widest">
+                {isExpanded ? "Close" : "Coming Soon"}
+              </span>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+import { mediaOutreachLinks } from "@/lib/mediaLinks";
+
+const mediaData = [
+  { id: "eventHighlights", title: "Event Highlights", link: mediaOutreachLinks.eventHighlights },
+  { id: "podcastHighlights", title: "Podcast Highlights", link: mediaOutreachLinks.podcastHighlights },
+  { id: "awardsAndRecognition", title: "Awards & Recognition", link: mediaOutreachLinks.awardsAndRecognition },
+  { id: "pressAndCoverage", title: "Press & Coverage", link: mediaOutreachLinks.pressAndCoverage },
+  { id: "communityOutreach", title: "Community Outreach", link: mediaOutreachLinks.communityOutreach },
+  { id: "galleryAndMedia", title: "Gallery & Media", link: mediaOutreachLinks.galleryAndMedia },
+];
+
+function MediaSection() {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
+      {mediaData.map((m, i) => {
+        const isExpanded = expanded === m.id;
+        const hasLink = m.link && m.link !== "" && !m.link.includes("PASTE_");
+        
+        return (
+          <motion.div
+            key={m.id}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.05 }}
+            className={`glass-strong rounded-2xl racing-border p-6 hover:scale-[1.02] transition-transform group cursor-pointer ${isExpanded ? "ring-2 ring-primary/40" : ""}`}
+            onClick={() => setExpanded(isExpanded ? null : m.id)}
+          >
+            <div className="text-center">
+              <Video className="h-8 w-8 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <div className="font-bold">{m.title}</div>
+            </div>
+
+            <motion.div
+              initial={false}
+              animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-4 mt-4 border-t border-border text-center">
+                <p className="text-xs text-muted-foreground mb-4">
+                  Archive of our latest {m.title.toLowerCase()} and outreach activities.
+                </p>
+                {hasLink ? (
+                  <a
+                    href={m.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+                  >
+                    Click Here
+                  </a>
+                ) : (
+                  <span className="inline-flex items-center gap-2 rounded-xl glass border border-border px-4 py-2 text-xs font-semibold text-muted-foreground">
+                    Link Coming Soon
+                  </span>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -986,7 +1100,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><a href="/#partners" className="text-foreground/80 hover:text-primary transition-colors">Partners</a></li>
               <li><a href="/contact" className="text-foreground/80 hover:text-primary transition-colors">Contact</a></li>
-              <li><a href="/privacy-policy" className="text-foreground/80 hover:text-primary transition-colors">Privacy Policy</a></li>
+              <li><a href="/privacy" className="text-foreground/80 hover:text-primary transition-colors">Privacy Policy</a></li>
               <li><a href="/terms" className="text-foreground/80 hover:text-primary transition-colors">Terms</a></li>
               <li><a href="/rules" className="text-foreground/80 hover:text-primary transition-colors">Rules</a></li>
             </ul>

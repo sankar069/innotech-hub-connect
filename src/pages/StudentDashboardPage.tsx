@@ -66,12 +66,19 @@ export function StudentDashboardPage() {
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a href="/events" className="rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Explore Events</a>
                   <a href="/student/registrations" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">My Registrations</a>
-                  <a href="/student/profile" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Edit Profile</a>
+                  <a href="/dashboard/profile/edit" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Edit Profile</a>
                   <a href="/student/certificates" className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Certificates</a>
                 </div>
                 <div className="mt-6 max-w-sm">
-                  <div className="flex justify-between text-sm text-muted-foreground mb-2"><span>Profile Completion</span><span>{profile?.profileCompletion ?? 0}%</span></div>
-                  <div className="h-2 rounded-full bg-secondary overflow-hidden"><div className="h-full bg-gradient-primary" style={{ width: `${profile?.profileCompletion ?? 0}%` }} /></div>
+                  <a href="/dashboard/profile/edit" className="block group">
+                    <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                      <span className="group-hover:text-primary transition-colors">Profile Completion</span>
+                      <span className="font-bold">{stats.profileCompletion}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                      <div className="h-full bg-gradient-primary transition-all duration-500" style={{ width: `${stats.profileCompletion}%` }} />
+                    </div>
+                  </a>
                 </div>
               </motion.div>
 
@@ -88,7 +95,7 @@ export function StudentDashboardPage() {
                 {studentCards.map((card, index) => (
                   <motion.a
                     key={card.title}
-                    href={card.title === "Profile Completion" ? "/student/profile" : card.title === "Recommended Events" ? "/events" : card.title === "Certificates" ? "/student/certificates" : card.title.includes("Events") || card.title === "Payment Status" ? "/student/registrations" : "/student/dashboard"}
+                    href={card.title === "Profile Completion" ? "/dashboard/profile/edit" : card.title === "Recommended Events" ? "/events" : card.title === "Certificates" ? "/student/certificates" : card.title.includes("Events") || card.title === "Payment Status" ? "/student/registrations" : "/student/dashboard"}
                     initial={{ opacity: 0, y: 18 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

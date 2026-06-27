@@ -86,7 +86,7 @@ export function AdminLayout({
                       </a>
                     </div>
                   </div>
-                  <AdminErrorBoundary>
+                  <AdminErrorBoundary title={title}>
                     <AdminSafeContent render={() => children(user)} />
                   </AdminErrorBoundary>
                 </section>
@@ -104,31 +104,47 @@ function AdminSafeContent({ render }: { render: () => React.ReactNode }) {
   return <>{render()}</>;
 }
 
-class AdminErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean }> {
-  state = { hasError: false };
+class AdminErrorBoundary extends Component<
+  { children: React.ReactNode; title?: string },
+  { hasError: boolean; error: Error | null }
+> {
+  state = { hasError: false, error: null };
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
   }
 
-  componentDidCatch(error: unknown) {
-    console.error("Admin page failed to render", error);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Admin page failed to render:", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="glass-strong rounded-2xl p-6 racing-border">
-          <h2 className="text-2xl font-bold">Admin page could not load</h2>
+        <div className="glass-strong rounded-2xl p-6 racing-border max-w-2xl">
+          <h2 className="text-2xl font-bold">
+            Admin {this.props.title || "Module"} Error
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Some saved dashboard data may be outdated or malformed. Refresh the page or clear this page's local mock data if it keeps happening.
+            {(this.state.error as any)?.message ||
+              "An unexpected error occurred in the administrative interface."}
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button type="button" onClick={() => this.setState({ hasError: false })} className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+          <p className="mt-4 text-xs font-mono text-muted-foreground/60">
+            If this persists, try refreshing the dashboard or clearing local mock data.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => this.setState({ hasError: false, error: null })}
+              className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            >
               Try again
             </button>
-            <a href="/admin/dashboard" className="rounded-xl border border-border px-4 py-2 text-sm font-semibold">
-              Admin Dashboard
+            <a
+              href="/admin/dashboard"
+              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold"
+            >
+              Back to Dashboard
             </a>
           </div>
         </div>

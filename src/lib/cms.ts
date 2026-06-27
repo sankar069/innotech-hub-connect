@@ -269,9 +269,9 @@ export const cmsSeed: Record<CmsCollection, CmsItem[]> = {
   mediaPosts: [],
   pages: [
     {
-      id: "privacy-policy",
+      id: "privacy",
       title: "Privacy Policy",
-      slug: "privacy-policy",
+      slug: "privacy",
       content: "Information collected\nLogin/signup data\nEvent registration data\nContact form data\nStudent dashboard data\nCookies/analytics\nHow data is used\nThird-party services such as Google login, Vercel, storage, analytics\nData security\nUser rights\nContact email",
       lastUpdated: now,
       active: true,

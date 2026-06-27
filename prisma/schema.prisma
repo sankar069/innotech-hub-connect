@@ -1,0 +1,528 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE DOMAIN MODELS
+// ============================================================================
+
+/// System user account (admin or student)
+model User {
+  id                     String   @id @default(cuid())
+  email                  String   @unique
+  password               String   // hash only
+  name                   String
+  phone                  String?
+  profileImage           String?  // URL from Vercel Blob
+  role                   UserRole @default(STUDENT)
+  isActive               Boolean  @default(true)
+  emailVerified          Boolean  @default(false)
+  
+  // Relations
+  createdEventsAsAdmin   Event[]  @relation("adminUser")
+  registrations          EventRegistration[]
+  studentProfile         StudentProfile?
+  teamLeadTeams          Team[]   @relation("teamLead")
+  teamMemberships        TeamMember[]
+  submissions            Submission[]
+  tickets                Ticket[]
+  certificates           Certificate[]
+  notifications          Notification[]
+  paymentProofs          PaymentProof[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+enum UserRole {
+  ADMIN
+  STUDENT
+  VOLUNTEER
+}
+
+/// Extended student profile with additional metadata
+model StudentProfile {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Student metadata
+  collegeName            String?
+  yearOfStudy            String?
+  branch                 String?
+  skills                 String[] // JSON array of skills
+  bio                    String?
+  socialLinks            String?  // JSON object {linkedin, github, etc}
+  passportImage          String?  // URL from Vercel Blob
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([userId])
+}
+
+/// Event definition and configuration
+model Event {
+  id                     String   @id @default(cuid())
+  slug                   String   @unique
+  title                  String
+  description            String?
+  shortDescription       String?
+  status                 EventStatus @default(DRAFT)
+  
+  // Dates and timing
+  startDate              DateTime
+  endDate                DateTime
+  registrationStartDate  DateTime?
+  registrationEndDate    DateTime?
+  
+  // Location
+  location               String?
+  isOnline               Boolean  @default(false)
+  meetLink               String?  // Zoom, Google Meet, etc
+  
+  // Media & branding
+  bannerImage            String?  // URL from Vercel Blob
+  thumbnailImage         String?  // URL from Vercel Blob
+  
+  // Registration configuration
+  maxParticipants        Int?
+  registrationFee        Decimal  @default(0)
+  isPaid                 Boolean  @default(false)
+  registrationType       RegistrationType @default(INDIVIDUAL)
+  
+  // Event structure
+  rounds                 Int      @default(1)
+  hasTeams               Boolean  @default(false)
+  minTeamSize            Int?
+  maxTeamSize            Int?
+  
+  // Registration form config (JSON: array of field definitions)
+  registrationFields     String?  // JSON
+  
+  // Event rules and info
+  rules                  String?  // Rich text / markdown
+  prizes                 String?  // JSON object {first, second, third, etc}
+  judgesCriteria         String?  // JSON object
+  contactEmail           String?
+  contactPhone           String?
+  
+  // Admin
+  createdById            String
+  createdBy              User     @relation("adminUser", fields: [createdById], references: [id])
+  
+  // Relations
+  registrations          EventRegistration[]
+  rounds                 EventRound[]
+  submissions            Submission[]
+  paymentProofs          PaymentProof[]
+  teams                  Team[]
+  tickets                Ticket[]
+  certificates           Certificate[]
+  notifications          Notification[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([slug])
+  @@index([status])
+  @@index([createdById])
+}
+
+enum EventStatus {
+  DRAFT
+  ACTIVE
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationType {
+  INDIVIDUAL
+  TEAM
+  BOTH
+}
+
+/// Student registration for an event
+model EventRegistration {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Registration data
+  status                 RegistrationStatus @default(SUBMITTED)
+  answers                String   // JSON object of registration form answers
+  
+  // Team (if applicable)
+  teamId                 String?
+  team                   Team?    @relation(fields: [teamId], references: [id])
+  
+  // Relations
+  paymentProof           PaymentProof?
+  submission             Submission?
+  ticket                 Ticket?
+  certificate            Certificate?
+  notifications          Notification[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@unique([eventId, userId]) // Prevent duplicate registrations
+  @@index([eventId])
+  @@index([userId])
+  @@index([status])
+  @@index([teamId])
+}
+
+enum RegistrationStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+  PAYMENT_PENDING
+  PAYMENT_VERIFIED
+}
+
+/// Team for group events
+model Team {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  name                   String
+  description            String?
+  
+  leadId                 String
+  lead                   User     @relation("teamLead", fields: [leadId], references: [id])
+  
+  // Relations
+  members                TeamMember[]
+  registrations          EventRegistration[]
+  submissions            Submission[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([leadId])
+}
+
+/// Team membership
+model TeamMember {
+  id                     String   @id @default(cuid())
+  teamId                 String
+  team                   Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  joinedAt               DateTime @default(now())
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+/// Payment proof submission
+model PaymentProof {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  registrationId         String   @unique
+  registration           EventRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Payment details
+  proofImageUrl          String   // URL from Vercel Blob
+  amount                 Decimal
+  transactionId          String?
+  
+  // Status
+  status                 PaymentStatus @default(PENDING)
+  verifiedAt             DateTime?
+  verifiedBy             String?  // Admin user ID
+  rejectionReason        String?
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([registrationId])
+  @@index([userId])
+  @@index([status])
+}
+
+enum PaymentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  DISPUTED
+}
+
+/// Event round/phase (optional)
+model EventRound {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  title                  String
+  description            String?
+  roundNumber            Int
+  
+  startDate              DateTime
+  endDate                DateTime
+  submissionEndDate      DateTime?
+  
+  // Round config
+  evaluationCriteria     String?  // JSON
+  
+  // Relations
+  submissions            EventRoundSubmission[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@unique([eventId, roundNumber])
+  @@index([eventId])
+}
+
+/// Submission for event or round
+model Submission {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  registrationId         String?  @unique
+  registration           EventRegistration? @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  teamId                 String?
+  team                   Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Submission content
+  title                  String
+  description            String?
+  answers                String?  // JSON of submission answers
+  fileUrls               String[] // Array of URLs from Vercel Blob
+  
+  // Status
+  status                 SubmissionStatus @default(SUBMITTED)
+  score                  Decimal?
+  feedback               String?  // Admin feedback
+  
+  roundSubmissions       EventRoundSubmission[]
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([registrationId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+}
+
+/// Round-specific submission
+model EventRoundSubmission {
+  id                     String   @id @default(cuid())
+  roundId                String
+  round                  EventRound @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  
+  submissionId           String
+  submission             Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  
+  // Round submission data
+  answers                String?  // JSON of round-specific answers
+  fileUrls               String[] // Array of URLs
+  
+  status                 SubmissionStatus @default(SUBMITTED)
+  score                  Decimal?
+  feedback               String?
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@unique([roundId, submissionId])
+  @@index([roundId])
+  @@index([submissionId])
+}
+
+/// Event ticket (proof of registration)
+model Ticket {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  registrationId         String   @unique
+  registration           EventRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Ticket details
+  ticketNumber           String   @unique
+  qrCode                 String?  // QR code URL
+  status                 TicketStatus @default(ACTIVE)
+  
+  issuedAt               DateTime @default(now())
+  expiresAt              DateTime?
+  usedAt                 DateTime?
+
+  @@index([eventId])
+  @@index([registrationId])
+  @@index([userId])
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  EXPIRED
+  CANCELLED
+}
+
+/// Completion certificate
+model Certificate {
+  id                     String   @id @default(cuid())
+  eventId                String
+  event                  Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  registrationId         String   @unique
+  registration           EventRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Certificate details
+  certificateNumber      String   @unique
+  status                 CertificateStatus @default(ISSUED)
+  
+  certificateUrl         String?  // PDF URL from Vercel Blob
+  
+  issuedAt               DateTime @default(now())
+  expiresAt              DateTime?
+
+  @@index([eventId])
+  @@index([registrationId])
+  @@index([userId])
+}
+
+enum CertificateStatus {
+  DRAFT
+  ISSUED
+  REVOKED
+}
+
+/// Notification record
+model Notification {
+  id                     String   @id @default(cuid())
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  eventId                String?
+  event                  Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  registrationId         String?
+  registration           EventRegistration? @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  
+  type                   NotificationType
+  title                  String
+  message                String
+  actionUrl              String?
+  
+  isRead                 Boolean  @default(false)
+  readAt                 DateTime?
+  
+  createdAt              DateTime @default(now())
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([isRead])
+}
+
+enum NotificationType {
+  EVENT_CREATED
+  REGISTRATION_SUBMITTED
+  REGISTRATION_APPROVED
+  REGISTRATION_REJECTED
+  PAYMENT_VERIFIED
+  PAYMENT_REJECTED
+  SUBMISSION_SUBMITTED
+  SUBMISSION_REVIEWED
+  TICKET_ISSUED
+  CERTIFICATE_ISSUED
+  ROUND_STARTED
+  ROUND_ENDED
+  CUSTOM
+}
+
+/// CMS content blocks (for static pages, settings)
+model CmsBlock {
+  id                     String   @id @default(cuid())
+  key                    String   @unique // e.g., "homepage-hero", "privacy-policy"
+  title                  String
+  content                String   // Rich text / markdown
+  
+  metadata               String?  // JSON for extra data
+  
+  isPublished            Boolean  @default(true)
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([isPublished])
+}
+
+/// Media/blog posts
+model MediaPost {
+  id                     String   @id @default(cuid())
+  slug                   String   @unique
+  title                  String
+  content                String   // Rich text / markdown
+  excerpt                String?
+  
+  category               String   // e.g., "news", "tutorial", "announcement"
+  
+  thumbnailUrl           String?  // URL from Vercel Blob
+  imageUrls              String[] // Array of image URLs
+  
+  authorId               String?
+  author                 User?    @relation(fields: [authorId], references: [id])
+  
+  isPublished            Boolean  @default(false)
+  publishedAt            DateTime?
+  
+  views                  Int      @default(0)
+  
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+}

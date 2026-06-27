@@ -39,6 +39,21 @@ function localVercelApi(): Plugin {
         const { default: handler } = await import("./api/contact.js");
         await handler(request, response);
       });
+
+      server.middlewares.use("/api/upload", async (req, res) => {
+        if (!req.url) return;
+        const chunks: Buffer[] = [];
+        for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+        const rawBody = Buffer.concat(chunks);
+        const headers = Object.fromEntries(Object.entries(req.headers).map(([key, value]) => [key, Array.isArray(value) ? value.join(",") : value]));
+        const request = Object.assign(req, { body: rawBody, headers });
+        const response = Object.assign(res, {
+          status(statusCode: number) { res.statusCode = statusCode; return response; },
+          json(body: unknown) { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(body)); },
+        });
+        const { default: handler } = await import("./api/upload.js");
+        await handler(request, response);
+      });
     },
   };
 }

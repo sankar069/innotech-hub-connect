@@ -15,6 +15,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as LoginRouteImport } from './routes/login'
@@ -54,10 +55,12 @@ import { Route as AdminCertificatesRouteImport } from './routes/admin/certificat
 import { Route as StudentRegistrationsRegistrationIdRouteImport } from './routes/student/registrations/$registrationId'
 import { Route as MediaSlugPostSlugRouteImport } from './routes/media/$slug/$postSlug'
 import { Route as EventsSlugRegisterRouteImport } from './routes/events/$slug/register'
+import { Route as DashboardProfileEditRouteImport } from './routes/dashboard/profile.edit'
 import { Route as CertificateVerifyCertificateIdRouteImport } from './routes/certificate/verify/$certificateId'
 import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin/students/$studentId'
 import { Route as AdminEventsEventIdRouteImport } from './routes/admin/events/$eventId'
 import { Route as AdminEventsEventIdRegistrationsRouteImport } from './routes/admin/events/$eventId/registrations'
+import { Route as AdminEventsEventIdEditRouteImport } from './routes/admin/events/$eventId.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -87,6 +90,11 @@ const RoadmapRoute = RoadmapRouteImport.update({
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -285,6 +293,11 @@ const EventsSlugRegisterRoute = EventsSlugRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => EventsSlugRoute,
 } as any)
+const DashboardProfileEditRoute = DashboardProfileEditRouteImport.update({
+  id: '/dashboard/profile/edit',
+  path: '/dashboard/profile/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CertificateVerifyCertificateIdRoute =
   CertificateVerifyCertificateIdRouteImport.update({
     id: '/certificate/verify/$certificateId',
@@ -307,6 +320,11 @@ const AdminEventsEventIdRegistrationsRoute =
     path: '/registrations',
     getParentRoute: () => AdminEventsEventIdRoute,
   } as any)
+const AdminEventsEventIdEditRoute = AdminEventsEventIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AdminEventsEventIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -317,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
   '/rules': typeof RulesRoute
@@ -354,9 +373,11 @@ export interface FileRoutesByFullPath {
   '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
+  '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesByTo {
@@ -368,6 +389,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
   '/rules': typeof RulesRoute
@@ -405,9 +427,11 @@ export interface FileRoutesByTo {
   '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
+  '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRoutesById {
@@ -420,6 +444,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/media': typeof MediaRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/roadmap': typeof RoadmapRoute
   '/rules': typeof RulesRoute
@@ -457,9 +482,11 @@ export interface FileRoutesById {
   '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
+  '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
 }
 export interface FileRouteTypes {
@@ -473,6 +500,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy'
     | '/privacy-policy'
     | '/roadmap'
     | '/rules'
@@ -510,9 +538,11 @@ export interface FileRouteTypes {
     | '/admin/events/$eventId'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
+    | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events/$eventId/edit'
     | '/admin/events/$eventId/registrations'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -524,6 +554,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy'
     | '/privacy-policy'
     | '/roadmap'
     | '/rules'
@@ -561,9 +592,11 @@ export interface FileRouteTypes {
     | '/admin/events/$eventId'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
+    | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events/$eventId/edit'
     | '/admin/events/$eventId/registrations'
   id:
     | '__root__'
@@ -575,6 +608,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/media'
     | '/pricing'
+    | '/privacy'
     | '/privacy-policy'
     | '/roadmap'
     | '/rules'
@@ -612,9 +646,11 @@ export interface FileRouteTypes {
     | '/admin/events/$eventId'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
+    | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events/$eventId/edit'
     | '/admin/events/$eventId/registrations'
   fileRoutesById: FileRoutesById
 }
@@ -627,6 +663,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MediaRoute: typeof MediaRouteWithChildren
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RoadmapRoute: typeof RoadmapRoute
   RulesRoute: typeof RulesRoute
@@ -659,6 +696,7 @@ export interface RootRouteChildren {
   StudentSettingsRoute: typeof StudentSettingsRoute
   StudentSubmissionsRoute: typeof StudentSubmissionsRoute
   CertificateVerifyCertificateIdRoute: typeof CertificateVerifyCertificateIdRoute
+  DashboardProfileEditRoute: typeof DashboardProfileEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -703,6 +741,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -978,6 +1023,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsSlugRegisterRouteImport
       parentRoute: typeof EventsSlugRoute
     }
+    '/dashboard/profile/edit': {
+      id: '/dashboard/profile/edit'
+      path: '/dashboard/profile/edit'
+      fullPath: '/dashboard/profile/edit'
+      preLoaderRoute: typeof DashboardProfileEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/certificate/verify/$certificateId': {
       id: '/certificate/verify/$certificateId'
       path: '/certificate/verify/$certificateId'
@@ -1004,6 +1056,13 @@ declare module '@tanstack/react-router' {
       path: '/registrations'
       fullPath: '/admin/events/$eventId/registrations'
       preLoaderRoute: typeof AdminEventsEventIdRegistrationsRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
+    '/admin/events/$eventId/edit': {
+      id: '/admin/events/$eventId/edit'
+      path: '/edit'
+      fullPath: '/admin/events/$eventId/edit'
+      preLoaderRoute: typeof AdminEventsEventIdEditRouteImport
       parentRoute: typeof AdminEventsEventIdRoute
     }
   }
@@ -1065,10 +1124,12 @@ const TeamRouteChildren: TeamRouteChildren = {
 const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
 
 interface AdminEventsEventIdRouteChildren {
+  AdminEventsEventIdEditRoute: typeof AdminEventsEventIdEditRoute
   AdminEventsEventIdRegistrationsRoute: typeof AdminEventsEventIdRegistrationsRoute
 }
 
 const AdminEventsEventIdRouteChildren: AdminEventsEventIdRouteChildren = {
+  AdminEventsEventIdEditRoute: AdminEventsEventIdEditRoute,
   AdminEventsEventIdRegistrationsRoute: AdminEventsEventIdRegistrationsRoute,
 }
 
@@ -1120,6 +1181,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MediaRoute: MediaRouteWithChildren,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RoadmapRoute: RoadmapRoute,
   RulesRoute: RulesRoute,
@@ -1152,6 +1214,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentSettingsRoute: StudentSettingsRoute,
   StudentSubmissionsRoute: StudentSubmissionsRoute,
   CertificateVerifyCertificateIdRoute: CertificateVerifyCertificateIdRoute,
+  DashboardProfileEditRoute: DashboardProfileEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

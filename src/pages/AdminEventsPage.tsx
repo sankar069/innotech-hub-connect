@@ -1,47 +1,15 @@
 import { useMemo, useState } from "react";
-import type React from "react";
-import { Download, Plus, Save } from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { FileUploadField } from "@/components/admin/FileUploadField";
-import { eventCategories, eventStatuses, eventTypes, getEvents, participationModes, paymentTypes, registrationsToCsv, saveEvents, type EventItem } from "@/lib/events";
-import { slugify, useCmsCollection } from "@/lib/cms";
-import { createId } from "@/lib/id";
-
-const blankEvent = (): EventItem => ({
-  id: createId("event"),
-  title: "",
-  slug: "",
-  category: "",
-  type: "",
-  participationMode: "",
-  shortDescription: "",
-  fullDescription: "",
-  organizerName: "",
-  organizerLogo: "",
-  hostedBy: "",
-  externalLink: "",
-  status: "Draft",
-  featured: false,
-  active: true,
-  order: getEvents().length + 1,
-  dates: { registrationStartDate: "", registrationStartTime: "", registrationEndDate: "", registrationEndTime: "", eventStartDate: "", eventStartTime: "", eventEndDate: "", eventEndTime: "", resultDate: "", resultTime: "", timeZone: "Asia/Kolkata" },
-  location: { meetingPlatform: "", meetingLink: "", backupLink: "", communityLink: "", venueName: "", collegeName: "", address: "", city: "", state: "", pincode: "", mapsLink: "" },
-  media: { banner: "", poster: "", thumbnail: "", mobileBanner: "" },
-  rounds: [],
-  rules: { eligibility: "", regulations: "", guidelines: "", teamSize: "", submissionFormat: "", judgingCriteria: "", disqualification: "", conduct: "", notes: "", documents: "", ruleDocument: "", brochureDocument: "" },
-  rewards: { totalPrizePool: "", winnerPrize: "", runnerUpPrize: "", secondRunnerUpPrize: "", specialPrizes: "", certificates: "", goodies: "", internship: "", mentorship: "", sponsorRewards: "", benefits: "" },
-  contact: { name: "", role: "", email: "", phone: "", whatsapp: "", discord: "", telegram: "", message: "" },
-  payment: { type: "Free Event", amount: 0, currency: "INR", upiId: "", qrImage: "", instructions: "", deadline: "", refundPolicy: "", verificationNote: "" },
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-});
+import { eventCategories, eventStatuses, eventTypes, getEvents, paymentTypes, registrationsToCsv, saveEvents, type EventItem } from "@/lib/events";
+import { Link } from "@tanstack/react-router";
+import { useCmsCollection } from "@/lib/cms";
 
 export function AdminEventsPage() {
   const { items: storedEvents } = useCmsCollection<EventItem>("events");
   const events = Array.isArray(storedEvents) ? storedEvents : [];
   const { items: storedRegistrations } = useCmsCollection("eventRegistrations");
   const registrations = Array.isArray(storedRegistrations) ? storedRegistrations : [];
-  const [editing, setEditing] = useState<EventItem | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
@@ -54,25 +22,12 @@ export function AdminEventsPage() {
     return matchesQuery && (!category || event?.category === category) && (!status || event?.status === status) && (!type || event?.type === type) && (!paymentType || event?.payment?.type === paymentType);
   }), [events, query, category, status, type, paymentType]);
 
-  const save = () => {
-    if (!editing) return;
-    if (!editing.title || !editing.category || !editing.type || !editing.participationMode || !editing.dates?.registrationStartDate || !editing.dates?.registrationEndDate || !editing.dates?.eventStartDate || !editing.dates?.eventEndDate) {
-      setMessage("Title, category, type, participation mode, registration dates, and event dates are required.");
-      return;
-    }
-    const next = { ...editing, slug: editing.slug || slugify(editing.title), updatedAt: new Date().toISOString() };
-    saveEvents(events.some((event) => event.id === next.id) ? events.map((event) => event.id === next.id ? next : event) : [next, ...events]);
-    setEditing(null);
-    setMessage("Event saved.");
-  };
-
   const remove = (event: EventItem) => {
     if (!window.confirm("Delete this event?")) return;
     saveEvents(events.filter((item) => item.id !== event.id));
+    setMessage("Event deleted.");
+    setTimeout(() => setMessage(""), 3000);
   };
-
-  const update = (key: keyof EventItem, value: unknown) => setEditing((current) => current ? { ...current, [key]: value } : current);
-  const updateNested = (group: "dates" | "location" | "media" | "rules" | "rewards" | "contact" | "payment", key: string, value: unknown) => setEditing((current) => current ? { ...current, [group]: { ...(current[group] as Record<string, unknown>), [key]: value } } : current);
 
   const exportCsv = (event: EventItem) => {
     const csv = registrationsToCsv(registrations.filter((registration) => registration.eventId === event.id) as any);
@@ -85,6 +40,12 @@ export function AdminEventsPage() {
     URL.revokeObjectURL(url);
   };
 
+  const toggleStatus = (event: EventItem, newStatus: string) => {
+    saveEvents(events.map((item) => item.id === event.id ? { ...item, status: newStatus, updatedAt: new Date().toISOString() } : item));
+    setMessage(`Event status updated to ${newStatus}.`);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
   return (
     <AdminLayout title="Events CMS">
       {() => (
@@ -95,11 +56,13 @@ export function AdminEventsPage() {
                 <h2 className="text-2xl font-bold">Event Management</h2>
                 <p className="mt-2 text-sm text-muted-foreground">Create, edit, publish, complete, and manage registrations for events.</p>
               </div>
-              <button onClick={() => setEditing(blankEvent())} className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"><Plus className="h-4 w-4" /> Create Event</button>
+              <Link to="/admin/events/$eventId/edit" params={{ eventId: "new" }} className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                <Plus className="h-4 w-4" /> Create Event
+              </Link>
             </div>
-            {message && <p className="mt-4 text-sm text-primary">{message}</p>}
+            {message && <p className="mt-4 text-sm text-primary animate-in fade-in slide-in-from-top-1">{message}</p>}
             <div className="grid md:grid-cols-5 gap-3 mt-5">
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search events" className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search events" className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary" />
               <Select value={category} onChange={setCategory} options={eventCategories} placeholder="Category" />
               <Select value={status} onChange={setStatus} options={eventStatuses} placeholder="Status" />
               <Select value={type} onChange={setType} options={eventTypes} placeholder="Type" />
@@ -107,95 +70,38 @@ export function AdminEventsPage() {
             </div>
           </div>
 
-          {editing && (
-            <div className="glass-strong rounded-2xl p-6 racing-border space-y-8">
-              <h3 className="text-2xl font-bold">Create / Edit Event</h3>
-              <FormGrid title="Basic Details">
-                <Field label="Event Title" value={editing.title} onChange={(v) => update("title", v)} />
-                <Field label="Event Slug" value={editing.slug} onChange={(v) => update("slug", v)} />
-                <Select label="Event Category" value={editing.category} onChange={(v) => update("category", v)} options={eventCategories} placeholder="Select category" />
-                <Select label="Event Type" value={editing.type} onChange={(v) => update("type", v)} options={eventTypes} placeholder="Select type" />
-                <Select label="Participation Mode" value={editing.participationMode} onChange={(v) => update("participationMode", v)} options={participationModes} placeholder="Select mode" />
-                <Select label="Event Status" value={editing.status} onChange={(v) => update("status", v)} options={eventStatuses} placeholder="Select status" />
-                <Field label="Short Description" value={editing.shortDescription} onChange={(v) => update("shortDescription", v)} textarea />
-                <Field label="Full Event Description" value={editing.fullDescription ?? ""} onChange={(v) => update("fullDescription", v)} textarea />
-                <Field label="Organizer Name" value={editing.organizerName ?? ""} onChange={(v) => update("organizerName", v)} />
-                <div>
-                  <FileUploadField label="Organizer Logo" value={editing.organizerLogo ?? ""} onChange={(v) => update("organizerLogo", v)} helper="JPG, PNG, WebP accepted." />
-                </div>
-                <Field label="Hosted By / College / Company / Community" value={editing.hostedBy ?? ""} onChange={(v) => update("hostedBy", v)} />
-                <Field label="Event Website / External Link" value={editing.externalLink ?? ""} onChange={(v) => update("externalLink", v)} />
-                <CheckField label="Featured Event" checked={Boolean(editing.featured)} onChange={(v) => update("featured", v)} />
-                <CheckField label="Active" checked={editing.active !== false} onChange={(v) => update("active", v)} />
-              </FormGrid>
-
-              <FormGrid title="Date & Time Details">
-                {["registrationStartDate", "registrationStartTime", "registrationEndDate", "registrationEndTime", "eventStartDate", "eventStartTime", "eventEndDate", "eventEndTime", "resultDate", "resultTime", "timeZone"].map((key) => <Field key={key} label={key} value={String(editing.dates?.[key] ?? "")} onChange={(v) => updateNested("dates", key, v)} />)}
-              </FormGrid>
-
-              <FormGrid title="Location / Meeting Details">
-                {["meetingPlatform", "meetingLink", "backupLink", "communityLink", "venueName", "collegeName", "address", "city", "state", "pincode", "mapsLink"].map((key) => <Field key={key} label={key} value={String(editing.location?.[key] ?? "")} onChange={(v) => updateNested("location", key, v)} />)}
-              </FormGrid>
-
-              <FormGrid title="Event Banner / Poster Upload">
-                <Help text="Accepted image formats: JPG, PNG, WebP. File size validation is kept local for now and can be tightened after storage setup." />
-                <FileUploadField label="Event Banner Image" value={String(editing.media?.banner ?? "")} onChange={(v) => updateNested("media", "banner", v)} helper="Recommended: 1920 x 1080 px." />
-                <FileUploadField label="Event Poster Image" value={String(editing.media?.poster ?? "")} onChange={(v) => updateNested("media", "poster", v)} helper="Recommended: 1080 x 1350 px." />
-                <FileUploadField label="Square Thumbnail Image" value={String(editing.media?.thumbnail ?? "")} onChange={(v) => updateNested("media", "thumbnail", v)} helper="Recommended: 1080 x 1080 px." />
-                <FileUploadField label="Mobile Banner Image" value={String(editing.media?.mobileBanner ?? "")} onChange={(v) => updateNested("media", "mobileBanner", v)} helper="Recommended: 1080 x 1920 px." />
-              </FormGrid>
-
-              <FormGrid title="Rounds / Stages">
-                <Field label="Rounds JSON" value={JSON.stringify(editing.rounds ?? [], null, 2)} onChange={(v) => { try { update("rounds", JSON.parse(v)); } catch { update("rounds", editing.rounds ?? []); } }} textarea />
-              </FormGrid>
-
-              <FormGrid title="Rules, Eligibility & Guidelines">
-                {["eligibility", "regulations", "guidelines", "teamSize", "submissionFormat", "judgingCriteria", "disqualification", "conduct", "notes", "documents"].map((key) => <Field key={key} label={key} value={String(editing.rules?.[key] ?? "")} onChange={(v) => updateNested("rules", key, v)} textarea={["regulations", "guidelines", "notes"].includes(key)} />)}
-                <FileUploadField label="Rule Document" value={String(editing.rules?.ruleDocument ?? "")} onChange={(v) => updateNested("rules", "ruleDocument", v)} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX." />
-                <FileUploadField label="Brochure / Document" value={String(editing.rules?.brochureDocument ?? "")} onChange={(v) => updateNested("rules", "brochureDocument", v)} accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" helper="Accepted: PDF, DOC, DOCX." />
-              </FormGrid>
-
-              <FormGrid title="Rewards / Certificates">
-                {["totalPrizePool", "winnerPrize", "runnerUpPrize", "secondRunnerUpPrize", "specialPrizes", "certificates", "goodies", "internship", "mentorship", "sponsorRewards", "benefits"].map((key) => <Field key={key} label={key} value={String(editing.rewards?.[key] ?? "")} onChange={(v) => updateNested("rewards", key, v)} />)}
-              </FormGrid>
-
-              <FormGrid title="Contact / Support Details">
-                {["name", "role", "email", "phone", "whatsapp", "discord", "telegram", "message"].map((key) => <Field key={key} label={key} value={String(editing.contact?.[key] ?? "")} onChange={(v) => updateNested("contact", key, v)} />)}
-              </FormGrid>
-
-              <FormGrid title="Free / Paid Event Option">
-                <Select label="Payment Type" value={String(editing.payment?.type ?? "Free Event")} onChange={(v) => updateNested("payment", "type", v)} options={paymentTypes} placeholder="Select payment type" />
-                <Field label="Registration Fee Amount" value={String(editing.payment?.amount ?? 0)} onChange={(v) => updateNested("payment", "amount", Number(v))} />
-                <Field label="currency" value={String(editing.payment?.currency ?? "")} onChange={(v) => updateNested("payment", "currency", v)} />
-                <Field label="upiId" value={String(editing.payment?.upiId ?? "")} onChange={(v) => updateNested("payment", "upiId", v)} />
-                <FileUploadField label="Payment QR Scanner Image" value={String(editing.payment?.qrImage ?? "")} onChange={(v) => updateNested("payment", "qrImage", v)} helper="Accepted: JPG, PNG, WebP." />
-                {["instructions", "deadline", "refundPolicy", "verificationNote"].map((key) => <Field key={key} label={key} value={String(editing.payment?.[key] ?? "")} onChange={(v) => updateNested("payment", key, v)} textarea={["instructions", "refundPolicy", "verificationNote"].includes(key)} />)}
-              </FormGrid>
-
-              <div className="flex flex-wrap gap-3">
-                <button onClick={save} className="inline-flex items-center gap-2 rounded-xl bg-gradient-primary px-5 py-3 text-sm font-semibold text-primary-foreground"><Save className="h-4 w-4" /> Save Event</button>
-                <button onClick={() => setEditing(null)} className="rounded-xl border border-border px-5 py-3 text-sm font-semibold">Cancel</button>
-              </div>
-            </div>
-          )}
-
           <div className="grid gap-4">
             {filtered.length === 0 ? (
-              <div className="glass-strong rounded-2xl p-6 racing-border text-muted-foreground">No events found. Create your first event.</div>
+              <div className="glass-strong rounded-2xl p-12 racing-border text-center">
+                <p className="text-muted-foreground">No events found matching your criteria.</p>
+              </div>
             ) : filtered.map((event) => (
-              <div key={event.id} className="glass-strong rounded-2xl p-5 racing-border">
+              <div key={event.id} className="glass-strong rounded-2xl p-5 racing-border group hover:bg-card/20 transition-colors">
                 <div className="flex flex-wrap justify-between gap-4">
-                  <div>
-                    <h3 className="font-bold">{event?.title ?? "N/A"}</h3>
-                    <p className="text-sm text-muted-foreground">{event?.category ?? "N/A"} - {event?.type ?? "N/A"} - {event?.status ?? "N/A"} - {String(event?.payment?.type ?? "Free Event")}</p>
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{event?.title ?? "Untitled Event"}</h3>
+                    <div className="flex flex-wrap gap-2 text-xs font-mono uppercase tracking-wider">
+                      <span className="text-muted-foreground">{event?.category}</span>
+                      <span className="text-muted-foreground/30">•</span>
+                      <span className="text-muted-foreground">{event?.type}</span>
+                      <span className="text-muted-foreground/30">•</span>
+                      <span className={`px-2 py-0.5 rounded-full ${event?.status === 'Published' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
+                        {event?.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <a href={`/admin/events/${event.id}/registrations`} className="rounded-lg border border-border px-3 py-2 text-sm">Registrations</a>
-                    <button onClick={() => exportCsv(event)} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm"><Download className="h-3.5 w-3.5" /> CSV</button>
-                    <button onClick={() => setEditing(event)} className="rounded-lg border border-border px-3 py-2 text-sm">Edit</button>
-                    <button onClick={() => saveEvents(events.map((item) => item.id === event.id ? { ...item, status: item.status === "Published" ? "Draft" : "Published" } : item))} className="rounded-lg border border-border px-3 py-2 text-sm">{event.status === "Published" ? "Unpublish" : "Publish"}</button>
-                    <button onClick={() => saveEvents(events.map((item) => item.id === event.id ? { ...item, status: "Completed" } : item))} className="rounded-lg border border-border px-3 py-2 text-sm">Complete</button>
-                    <button onClick={() => remove(event)} className="rounded-lg border border-destructive/30 px-3 py-2 text-sm text-destructive">Delete</button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <a href={`/admin/events/${event.id}/registrations`} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-card transition-colors">Registrations</a>
+                    <button onClick={() => exportCsv(event)} className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm hover:bg-card transition-colors"><Download className="h-3.5 w-3.5" /> CSV</button>
+                    <Link to="/admin/events/$eventId/edit" params={{ eventId: event.id }} className="rounded-lg border border-border px-3 py-2 text-sm hover:border-primary hover:text-primary transition-colors">Edit</Link>
+                    {event.status !== "Published" && (
+                      <button onClick={() => toggleStatus(event, "Published")} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-primary/10 hover:text-primary transition-colors text-primary border-primary/30">Publish</button>
+                    )}
+                    {event.status === "Published" && (
+                      <button onClick={() => toggleStatus(event, "Draft")} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-card transition-colors">Unpublish</button>
+                    )}
+                    <button onClick={() => toggleStatus(event, "Completed")} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-card transition-colors">Complete</button>
+                    <button onClick={() => remove(event)} className="rounded-lg border border-destructive/20 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors">Delete</button>
                   </div>
                 </div>
               </div>
@@ -207,24 +113,13 @@ export function AdminEventsPage() {
   );
 }
 
-function FormGrid({ title, children }: { title: string; children: React.ReactNode }) {
-  return <section><h4 className="text-xl font-bold mb-4">{title}</h4><div className="grid md:grid-cols-2 gap-4">{children}</div></section>;
-}
-
-function Field({ label, value, onChange, textarea, preview }: { label: string; value: string; onChange: (value: string) => void; textarea?: boolean; preview?: boolean }) {
-  const className = "w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary";
-  return <label className={textarea ? "md:col-span-2" : ""}><span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">{label}</span>{textarea ? <textarea rows={4} value={value} onChange={(e) => onChange(e.target.value)} className={className} /> : <input value={value} onChange={(e) => onChange(e.target.value)} className={className} />}{preview && value ? <img src={value} alt="" className="mt-3 h-24 w-24 rounded-xl object-cover border border-border" /> : null}</label>;
-}
-
-function Select({ label, value, onChange, options, placeholder }: { label?: string; value: string; onChange: (value: string) => void; options: string[]; placeholder: string }) {
-  const select = <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary"><option value="">{placeholder}</option>{options.map((option) => <option key={option}>{option}</option>)}</select>;
-  return label ? <label><span className="block text-xs uppercase font-mono tracking-widest text-muted-foreground mb-2">{label}</span>{select}</label> : select;
-}
-
-function CheckField({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
-  return <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-5 w-5 accent-primary" />{label}</label>;
-}
-
-function Help({ text }: { text: string }) {
-  return <div className="rounded-xl border border-border bg-card/40 p-4 text-sm text-muted-foreground">{text}</div>;
+function Select({ value, onChange, options, placeholder }: { value: string; onChange: (value: string) => void; options: string[]; placeholder: string }) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background/60 border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary">
+      <option value="">{placeholder}</option>
+      {options.map((option) => (
+        <option key={option} value={option}>{option}</option>
+      ))}
+    </select>
+  );
 }
