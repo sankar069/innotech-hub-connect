@@ -32,7 +32,7 @@ const blankEvent = (): EventItem => ({
   status: "Draft",
   featured: false,
   active: true,
-  order: getEvents().length + 1,
+  order: Date.now(),
   dates: { registrationStartDate: "", registrationStartTime: "", registrationEndDate: "", registrationEndTime: "", eventStartDate: "", eventStartTime: "", eventEndDate: "", eventEndTime: "", resultDate: "", resultTime: "", timeZone: "Asia/Kolkata" },
   location: { meetingPlatform: "", meetingLink: "", backupLink: "", communityLink: "", venueName: "", collegeName: "", address: "", city: "", state: "", pincode: "", mapsLink: "" },
   media: { banner: "", poster: "", thumbnail: "", mobileBanner: "" },
@@ -85,7 +85,7 @@ export function AdminEventEditPage({ eventId }: Props) {
     saveEvents(events.some((e) => e.id === next.id) ? events.map((e) => e.id === next.id ? next : e) : [next, ...events]);
     setMessage("Event saved successfully.");
     setTimeout(() => {
-      window.location.href = "/admin/events";
+      window.location.href = `/admin/events/${next.id}`;
     }, 1500);
   };
 

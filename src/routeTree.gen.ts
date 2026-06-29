@@ -52,15 +52,23 @@ import { Route as AdminEventsRouteImport } from './routes/admin/events'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminContactLeadsRouteImport } from './routes/admin/contact-leads'
 import { Route as AdminCertificatesRouteImport } from './routes/admin/certificates'
+import { Route as AdminEventsIndexRouteImport } from './routes/admin/events/index'
 import { Route as StudentRegistrationsRegistrationIdRouteImport } from './routes/student/registrations/$registrationId'
 import { Route as MediaSlugPostSlugRouteImport } from './routes/media/$slug/$postSlug'
 import { Route as EventsSlugRegisterRouteImport } from './routes/events/$slug/register'
 import { Route as DashboardProfileEditRouteImport } from './routes/dashboard/profile.edit'
 import { Route as CertificateVerifyCertificateIdRouteImport } from './routes/certificate/verify/$certificateId'
 import { Route as AdminStudentsStudentIdRouteImport } from './routes/admin/students/$studentId'
+import { Route as AdminEventsNewRouteImport } from './routes/admin/events/new'
 import { Route as AdminEventsEventIdRouteImport } from './routes/admin/events/$eventId'
+import { Route as AdminEventsEventIdIndexRouteImport } from './routes/admin/events/$eventId/index'
+import { Route as AdminEventsEventIdTeamsRouteImport } from './routes/admin/events/$eventId/teams'
+import { Route as AdminEventsEventIdSubmissionsRouteImport } from './routes/admin/events/$eventId/submissions'
 import { Route as AdminEventsEventIdRegistrationsRouteImport } from './routes/admin/events/$eventId/registrations'
+import { Route as AdminEventsEventIdPaymentsRouteImport } from './routes/admin/events/$eventId/payments'
+import { Route as AdminEventsEventIdParticipantsRouteImport } from './routes/admin/events/$eventId/participants'
 import { Route as AdminEventsEventIdEditRouteImport } from './routes/admin/events/$eventId.edit'
+import { Route as AdminEventsEventIdCertificatesRouteImport } from './routes/admin/events/$eventId/certificates'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -277,6 +285,11 @@ const AdminCertificatesRoute = AdminCertificatesRouteImport.update({
   path: '/admin/certificates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEventsIndexRoute = AdminEventsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminEventsRoute,
+} as any)
 const StudentRegistrationsRegistrationIdRoute =
   StudentRegistrationsRegistrationIdRouteImport.update({
     id: '/$registrationId',
@@ -309,15 +322,48 @@ const AdminStudentsStudentIdRoute = AdminStudentsStudentIdRouteImport.update({
   path: '/$studentId',
   getParentRoute: () => AdminStudentsRoute,
 } as any)
+const AdminEventsNewRoute = AdminEventsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AdminEventsRoute,
+} as any)
 const AdminEventsEventIdRoute = AdminEventsEventIdRouteImport.update({
   id: '/$eventId',
   path: '/$eventId',
   getParentRoute: () => AdminEventsRoute,
 } as any)
+const AdminEventsEventIdIndexRoute = AdminEventsEventIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminEventsEventIdRoute,
+} as any)
+const AdminEventsEventIdTeamsRoute = AdminEventsEventIdTeamsRouteImport.update({
+  id: '/teams',
+  path: '/teams',
+  getParentRoute: () => AdminEventsEventIdRoute,
+} as any)
+const AdminEventsEventIdSubmissionsRoute =
+  AdminEventsEventIdSubmissionsRouteImport.update({
+    id: '/submissions',
+    path: '/submissions',
+    getParentRoute: () => AdminEventsEventIdRoute,
+  } as any)
 const AdminEventsEventIdRegistrationsRoute =
   AdminEventsEventIdRegistrationsRouteImport.update({
     id: '/registrations',
     path: '/registrations',
+    getParentRoute: () => AdminEventsEventIdRoute,
+  } as any)
+const AdminEventsEventIdPaymentsRoute =
+  AdminEventsEventIdPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AdminEventsEventIdRoute,
+  } as any)
+const AdminEventsEventIdParticipantsRoute =
+  AdminEventsEventIdParticipantsRouteImport.update({
+    id: '/participants',
+    path: '/participants',
     getParentRoute: () => AdminEventsEventIdRoute,
   } as any)
 const AdminEventsEventIdEditRoute = AdminEventsEventIdEditRouteImport.update({
@@ -325,6 +371,12 @@ const AdminEventsEventIdEditRoute = AdminEventsEventIdEditRouteImport.update({
   path: '/edit',
   getParentRoute: () => AdminEventsEventIdRoute,
 } as any)
+const AdminEventsEventIdCertificatesRoute =
+  AdminEventsEventIdCertificatesRouteImport.update({
+    id: '/certificates',
+    path: '/certificates',
+    getParentRoute: () => AdminEventsEventIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -371,14 +423,22 @@ export interface FileRoutesByFullPath {
   '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
   '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events/': typeof AdminEventsIndexRoute
+  '/admin/events/$eventId/certificates': typeof AdminEventsEventIdCertificatesRoute
   '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
+  '/admin/events/$eventId/participants': typeof AdminEventsEventIdParticipantsRoute
+  '/admin/events/$eventId/payments': typeof AdminEventsEventIdPaymentsRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
+  '/admin/events/$eventId/submissions': typeof AdminEventsEventIdSubmissionsRoute
+  '/admin/events/$eventId/teams': typeof AdminEventsEventIdTeamsRoute
+  '/admin/events/$eventId/': typeof AdminEventsEventIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -399,7 +459,6 @@ export interface FileRoutesByTo {
   '/admin/certificates': typeof AdminCertificatesRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/events': typeof AdminEventsRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/pages': typeof AdminPagesRoute
@@ -424,15 +483,22 @@ export interface FileRoutesByTo {
   '/student/settings': typeof StudentSettingsRoute
   '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
-  '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events': typeof AdminEventsIndexRoute
+  '/admin/events/$eventId/certificates': typeof AdminEventsEventIdCertificatesRoute
   '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
+  '/admin/events/$eventId/participants': typeof AdminEventsEventIdParticipantsRoute
+  '/admin/events/$eventId/payments': typeof AdminEventsEventIdPaymentsRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
+  '/admin/events/$eventId/submissions': typeof AdminEventsEventIdSubmissionsRoute
+  '/admin/events/$eventId/teams': typeof AdminEventsEventIdTeamsRoute
+  '/admin/events/$eventId': typeof AdminEventsEventIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -480,14 +546,22 @@ export interface FileRoutesById {
   '/student/submissions': typeof StudentSubmissionsRoute
   '/team/$slug': typeof TeamSlugRoute
   '/admin/events/$eventId': typeof AdminEventsEventIdRouteWithChildren
+  '/admin/events/new': typeof AdminEventsNewRoute
   '/admin/students/$studentId': typeof AdminStudentsStudentIdRoute
   '/certificate/verify/$certificateId': typeof CertificateVerifyCertificateIdRoute
   '/dashboard/profile/edit': typeof DashboardProfileEditRoute
   '/events/$slug/register': typeof EventsSlugRegisterRoute
   '/media/$slug/$postSlug': typeof MediaSlugPostSlugRoute
   '/student/registrations/$registrationId': typeof StudentRegistrationsRegistrationIdRoute
+  '/admin/events/': typeof AdminEventsIndexRoute
+  '/admin/events/$eventId/certificates': typeof AdminEventsEventIdCertificatesRoute
   '/admin/events/$eventId/edit': typeof AdminEventsEventIdEditRoute
+  '/admin/events/$eventId/participants': typeof AdminEventsEventIdParticipantsRoute
+  '/admin/events/$eventId/payments': typeof AdminEventsEventIdPaymentsRoute
   '/admin/events/$eventId/registrations': typeof AdminEventsEventIdRegistrationsRoute
+  '/admin/events/$eventId/submissions': typeof AdminEventsEventIdSubmissionsRoute
+  '/admin/events/$eventId/teams': typeof AdminEventsEventIdTeamsRoute
+  '/admin/events/$eventId/': typeof AdminEventsEventIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -536,14 +610,22 @@ export interface FileRouteTypes {
     | '/student/submissions'
     | '/team/$slug'
     | '/admin/events/$eventId'
+    | '/admin/events/new'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events/'
+    | '/admin/events/$eventId/certificates'
     | '/admin/events/$eventId/edit'
+    | '/admin/events/$eventId/participants'
+    | '/admin/events/$eventId/payments'
     | '/admin/events/$eventId/registrations'
+    | '/admin/events/$eventId/submissions'
+    | '/admin/events/$eventId/teams'
+    | '/admin/events/$eventId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -564,7 +646,6 @@ export interface FileRouteTypes {
     | '/admin/certificates'
     | '/admin/contact-leads'
     | '/admin/dashboard'
-    | '/admin/events'
     | '/admin/media'
     | '/admin/notifications'
     | '/admin/pages'
@@ -589,15 +670,22 @@ export interface FileRouteTypes {
     | '/student/settings'
     | '/student/submissions'
     | '/team/$slug'
-    | '/admin/events/$eventId'
+    | '/admin/events/new'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events'
+    | '/admin/events/$eventId/certificates'
     | '/admin/events/$eventId/edit'
+    | '/admin/events/$eventId/participants'
+    | '/admin/events/$eventId/payments'
     | '/admin/events/$eventId/registrations'
+    | '/admin/events/$eventId/submissions'
+    | '/admin/events/$eventId/teams'
+    | '/admin/events/$eventId'
   id:
     | '__root__'
     | '/'
@@ -644,14 +732,22 @@ export interface FileRouteTypes {
     | '/student/submissions'
     | '/team/$slug'
     | '/admin/events/$eventId'
+    | '/admin/events/new'
     | '/admin/students/$studentId'
     | '/certificate/verify/$certificateId'
     | '/dashboard/profile/edit'
     | '/events/$slug/register'
     | '/media/$slug/$postSlug'
     | '/student/registrations/$registrationId'
+    | '/admin/events/'
+    | '/admin/events/$eventId/certificates'
     | '/admin/events/$eventId/edit'
+    | '/admin/events/$eventId/participants'
+    | '/admin/events/$eventId/payments'
     | '/admin/events/$eventId/registrations'
+    | '/admin/events/$eventId/submissions'
+    | '/admin/events/$eventId/teams'
+    | '/admin/events/$eventId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1002,6 +1098,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCertificatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/events/': {
+      id: '/admin/events/'
+      path: '/'
+      fullPath: '/admin/events/'
+      preLoaderRoute: typeof AdminEventsIndexRouteImport
+      parentRoute: typeof AdminEventsRoute
+    }
     '/student/registrations/$registrationId': {
       id: '/student/registrations/$registrationId'
       path: '/$registrationId'
@@ -1044,12 +1147,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminStudentsStudentIdRouteImport
       parentRoute: typeof AdminStudentsRoute
     }
+    '/admin/events/new': {
+      id: '/admin/events/new'
+      path: '/new'
+      fullPath: '/admin/events/new'
+      preLoaderRoute: typeof AdminEventsNewRouteImport
+      parentRoute: typeof AdminEventsRoute
+    }
     '/admin/events/$eventId': {
       id: '/admin/events/$eventId'
       path: '/$eventId'
       fullPath: '/admin/events/$eventId'
       preLoaderRoute: typeof AdminEventsEventIdRouteImport
       parentRoute: typeof AdminEventsRoute
+    }
+    '/admin/events/$eventId/': {
+      id: '/admin/events/$eventId/'
+      path: '/'
+      fullPath: '/admin/events/$eventId/'
+      preLoaderRoute: typeof AdminEventsEventIdIndexRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
+    '/admin/events/$eventId/teams': {
+      id: '/admin/events/$eventId/teams'
+      path: '/teams'
+      fullPath: '/admin/events/$eventId/teams'
+      preLoaderRoute: typeof AdminEventsEventIdTeamsRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
+    '/admin/events/$eventId/submissions': {
+      id: '/admin/events/$eventId/submissions'
+      path: '/submissions'
+      fullPath: '/admin/events/$eventId/submissions'
+      preLoaderRoute: typeof AdminEventsEventIdSubmissionsRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
     }
     '/admin/events/$eventId/registrations': {
       id: '/admin/events/$eventId/registrations'
@@ -1058,11 +1189,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEventsEventIdRegistrationsRouteImport
       parentRoute: typeof AdminEventsEventIdRoute
     }
+    '/admin/events/$eventId/payments': {
+      id: '/admin/events/$eventId/payments'
+      path: '/payments'
+      fullPath: '/admin/events/$eventId/payments'
+      preLoaderRoute: typeof AdminEventsEventIdPaymentsRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
+    '/admin/events/$eventId/participants': {
+      id: '/admin/events/$eventId/participants'
+      path: '/participants'
+      fullPath: '/admin/events/$eventId/participants'
+      preLoaderRoute: typeof AdminEventsEventIdParticipantsRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
     '/admin/events/$eventId/edit': {
       id: '/admin/events/$eventId/edit'
       path: '/edit'
       fullPath: '/admin/events/$eventId/edit'
       preLoaderRoute: typeof AdminEventsEventIdEditRouteImport
+      parentRoute: typeof AdminEventsEventIdRoute
+    }
+    '/admin/events/$eventId/certificates': {
+      id: '/admin/events/$eventId/certificates'
+      path: '/certificates'
+      fullPath: '/admin/events/$eventId/certificates'
+      preLoaderRoute: typeof AdminEventsEventIdCertificatesRouteImport
       parentRoute: typeof AdminEventsEventIdRoute
     }
   }
@@ -1124,13 +1276,25 @@ const TeamRouteChildren: TeamRouteChildren = {
 const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
 
 interface AdminEventsEventIdRouteChildren {
+  AdminEventsEventIdCertificatesRoute: typeof AdminEventsEventIdCertificatesRoute
   AdminEventsEventIdEditRoute: typeof AdminEventsEventIdEditRoute
+  AdminEventsEventIdParticipantsRoute: typeof AdminEventsEventIdParticipantsRoute
+  AdminEventsEventIdPaymentsRoute: typeof AdminEventsEventIdPaymentsRoute
   AdminEventsEventIdRegistrationsRoute: typeof AdminEventsEventIdRegistrationsRoute
+  AdminEventsEventIdSubmissionsRoute: typeof AdminEventsEventIdSubmissionsRoute
+  AdminEventsEventIdTeamsRoute: typeof AdminEventsEventIdTeamsRoute
+  AdminEventsEventIdIndexRoute: typeof AdminEventsEventIdIndexRoute
 }
 
 const AdminEventsEventIdRouteChildren: AdminEventsEventIdRouteChildren = {
+  AdminEventsEventIdCertificatesRoute: AdminEventsEventIdCertificatesRoute,
   AdminEventsEventIdEditRoute: AdminEventsEventIdEditRoute,
+  AdminEventsEventIdParticipantsRoute: AdminEventsEventIdParticipantsRoute,
+  AdminEventsEventIdPaymentsRoute: AdminEventsEventIdPaymentsRoute,
   AdminEventsEventIdRegistrationsRoute: AdminEventsEventIdRegistrationsRoute,
+  AdminEventsEventIdSubmissionsRoute: AdminEventsEventIdSubmissionsRoute,
+  AdminEventsEventIdTeamsRoute: AdminEventsEventIdTeamsRoute,
+  AdminEventsEventIdIndexRoute: AdminEventsEventIdIndexRoute,
 }
 
 const AdminEventsEventIdRouteWithChildren =
@@ -1138,10 +1302,14 @@ const AdminEventsEventIdRouteWithChildren =
 
 interface AdminEventsRouteChildren {
   AdminEventsEventIdRoute: typeof AdminEventsEventIdRouteWithChildren
+  AdminEventsNewRoute: typeof AdminEventsNewRoute
+  AdminEventsIndexRoute: typeof AdminEventsIndexRoute
 }
 
 const AdminEventsRouteChildren: AdminEventsRouteChildren = {
   AdminEventsEventIdRoute: AdminEventsEventIdRouteWithChildren,
+  AdminEventsNewRoute: AdminEventsNewRoute,
+  AdminEventsIndexRoute: AdminEventsIndexRoute,
 }
 
 const AdminEventsRouteWithChildren = AdminEventsRoute._addFileChildren(
