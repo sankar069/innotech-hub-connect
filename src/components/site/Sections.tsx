@@ -323,9 +323,12 @@ const aiTools = [
   { icon: FileSearch, title: "AI Idea Analyzer", desc: "Checks uniqueness, feasibility, business value, and presentation strength." },
   { icon: UsersRound, title: "AI Team Matching", desc: "Matches by skills, interests, availability, domain, and project goals." },
   { icon: FileText, title: "Resume Analyzer", desc: "Resume score, missing skills, ATS suggestions, and event-based bullets." },
+  { icon: GraduationCap, title: "AI Career Guidance", desc: "Personalized career roadmaps, skill gap analysis, and next-step recommendations for your tech journey." },
 ];
 
 export function AITools() {
+  const [openTool, setOpenTool] = useState<string | null>(null);
+
   return (
     <section className="relative py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -334,22 +337,58 @@ export function AITools() {
           title={<>AI-Powered <span className="text-gradient-racing">Student Growth</span> Tools</>}
           subtitle="AI guides students before, during, and after every event."
         />
+        {/* Coming Soon dialog */}
+        {openTool && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+            onClick={() => setOpenTool(null)}
+          >
+            <div
+              className="glass-strong rounded-2xl p-8 racing-border max-w-sm w-full text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 shadow-glow mx-auto">
+                <Sparkles className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <h3 className="font-bold text-xl mb-2">{openTool}</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                This feature is currently under development and will be available soon.
+              </p>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-mono uppercase tracking-widest">
+                Coming Soon
+              </span>
+              <div className="mt-6">
+                <button
+                  onClick={() => setOpenTool(null)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
           {aiTools.map((t, i) => (
-            <motion.div
+            <motion.button
               key={t.title}
+              type="button"
+              onClick={() => setOpenTool(t.title)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.07 }}
-              className="racing-border rounded-2xl p-6 hover:-translate-y-1 transition-transform group"
+              className="racing-border rounded-2xl p-6 hover:-translate-y-1 transition-transform group text-left w-full"
             >
               <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 shadow-glow group-hover:scale-110 transition-transform">
                 <t.icon className="h-6 w-6 text-primary-foreground" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
-            </motion.div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">{t.desc}</p>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-mono uppercase tracking-widest border border-primary/20">
+                <Sparkles className="h-3 w-3" /> Coming Soon
+              </span>
+            </motion.button>
           ))}
         </div>
       </div>
